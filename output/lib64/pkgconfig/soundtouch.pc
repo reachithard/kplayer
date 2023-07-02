@@ -1,0 +1,11 @@
+prefix=/root/av/kplayer/output
+exec_prefix=
+libdir=${prefix}/lib64
+includedir=${prefix}/include
+
+Name: SoundTouch
+Description: SoundTouch is an open-source audio processing library for changing the Tempo, Pitch and Playback Rates of audio streams or files
+Version: 2.3.2
+Libs: -L${libdir} -lSoundTouch
+Cflags: -I${includedir}/soundtouch  
+
