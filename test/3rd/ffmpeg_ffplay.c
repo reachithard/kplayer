@@ -50,7 +50,6 @@
 #include "libavcodec/avfft.h"
 #include "libswresample/swresample.h"
 
-#define CONFIG_AVFILTER 0
 
 #if CONFIG_AVFILTER
 # include "libavfilter/avfilter.h"

@@ -1,0 +1,7 @@
+#ifndef _PLAYER_ERRORS_H_
+#define _PLAYER_ERRORS_H_
+
+#define PLAYER_SUSSES 0
+#define PLAYER_GLOBAL_INIT_ERROR 1
+
+#endif // _PLAYER_ERRORS_H_
