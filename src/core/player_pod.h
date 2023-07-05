@@ -285,6 +285,9 @@ typedef struct VideoState {
 } VideoState;
 
 typedef struct Player {
+    VideoState *is;
+    SDL_Thread *refresh_tid;
+
 /* options specified by the user */
     const AVInputFormat *file_iformat;
     const char *input_filename;

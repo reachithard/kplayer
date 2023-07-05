@@ -10,7 +10,7 @@ Player *CreatePlayer();
 void DestroyPlayer(Player *player);
 void ResetPlayer(Player *player);
 
-int PlayerPlay(Player *player, const char *fileName);
+int PlayerPlay(Player *player);
 int PlayerStart(Player *player, uint64_t msec);
 
 #endif // _PLAYER_H_
