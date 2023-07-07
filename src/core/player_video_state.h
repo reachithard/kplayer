@@ -3,19 +3,19 @@
 
 #include "player_pod.h"
 
-void video_image_display(VideoState *is);
+void video_image_display(Player *player, VideoState *is);
 
-static void video_audio_display(VideoState *s);
+static void video_audio_display(Player *player, VideoState *s);
 
-void stream_component_close(VideoState *is, int stream_index);
+void stream_component_close(Player *player, VideoState *is, int stream_index);
 
-void stream_close(VideoState *is);
+void stream_close(Player* player, VideoState *is);
 
 void do_exit(VideoState *is);
 
-int video_open(VideoState *is);
+int video_open(Player *player, VideoState *is);
 
-void video_display(VideoState *is);
+void video_display(Player *player, VideoState *is);
 
 int get_master_sync_type(VideoState *is);
 
@@ -43,7 +43,7 @@ void update_video_pts(VideoState *is, double pts, int64_t pos, int serial);
 
 int queue_picture(VideoState *is, AVFrame *src_frame, double pts, double duration, int64_t pos, int serial);
 
-int get_video_frame(VideoState *is, AVFrame *frame);
+int get_video_frame(Player* player, VideoState *is, AVFrame *frame);
 
 void update_sample_display(VideoState *is, short *samples, int samples_size);
 

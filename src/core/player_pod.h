@@ -24,6 +24,7 @@
 #include "libswscale/swscale.h"
 #include "libavutil/opt.h"
 #include "libavcodec/avfft.h"
+#include "libavcodec/avcodec.h"
 #include "libswresample/swresample.h"
 
 #if CONFIG_AVFILTER
@@ -35,8 +36,8 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 
-#include "cmdutils.h"
-#include "opt_common.h"
+// #include "cmdutils.h"
+// #include "opt_common.h"
 
 const char program_name[] = "ffplay"; // llw TODO 研究这个做什么用的
 const int program_birth_year = 2003; // llw TODO 研究这个做什么用的
@@ -348,6 +349,11 @@ typedef struct Player {
     SDL_Renderer *renderer;
     SDL_RendererInfo renderer_info;
     SDL_AudioDeviceID audio_dev;
+
+    AVDictionary *sws_dict;
+    AVDictionary *swr_opts;
+    AVDictionary *format_opts;
+    AVDictionary *codec_opts;
 } Player;
 
 typedef struct KPlayerGlobal {

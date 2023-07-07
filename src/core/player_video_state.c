@@ -2,7 +2,7 @@
 
 #include "player_clock.h"
 
-void video_image_display(VideoState *is)
+void video_image_display(Player *player, VideoState *is)
 {
     Frame *vp;
     Frame *sp = NULL;
@@ -66,11 +66,11 @@ void video_image_display(VideoState *is)
         vp->flip_v = vp->frame->linesize[0] < 0;
     }
 
-    SDL_RenderCopyEx(renderer, is->vid_texture, NULL, &rect, 0, NULL, vp->flip_v ? SDL_FLIP_VERTICAL : 0);
+    SDL_RenderCopyEx(player->renderer, is->vid_texture, NULL, &rect, 0, NULL, vp->flip_v ? SDL_FLIP_VERTICAL : 0);
     set_sdl_yuv_conversion_mode(NULL);
     if (sp) {
 #if USE_ONEPASS_SUBTITLE_RENDER
-        SDL_RenderCopy(renderer, is->sub_texture, NULL, &rect);
+        SDL_RenderCopy(player->renderer, is->sub_texture, NULL, &rect);
 #else
         int i;
         double xratio = (double)rect.w / (double)sp->width;
@@ -81,13 +81,13 @@ void video_image_display(VideoState *is)
                                .y = rect.y + sub_rect->y * yratio,
                                .w = sub_rect->w * xratio,
                                .h = sub_rect->h * yratio};
-            SDL_RenderCopy(renderer, is->sub_texture, sub_rect, &target);
+            SDL_RenderCopy(player->renderer, is->sub_texture, sub_rect, &target);
         }
 #endif
     }
 }
 
-static void video_audio_display(VideoState *s)
+static void video_audio_display(Player *player, VideoState *s)
 {
     int i, i_start, x, y1, y, ys, delay, n, nb_display_channels;
     int ch, channels, h, h2;
@@ -109,8 +109,8 @@ static void video_audio_display(VideoState *s)
 
         /* to be more precise, we take into account the time spent since
            the last buffer computation */
-        if (audio_callback_time) {
-            time_diff = av_gettime_relative() - audio_callback_time;
+        if (player->audio_callback_time) {
+            time_diff = av_gettime_relative() - player->audio_callback_time;
             delay -= (time_diff * s->audio_tgt.freq) / 1000000;
         }
 
@@ -141,7 +141,7 @@ static void video_audio_display(VideoState *s)
     }
 
     if (s->show_mode == SHOW_MODE_WAVES) {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(player->renderer, 255, 255, 255, 255);
 
         /* total height for one channel */
         h = s->height / nb_display_channels;
@@ -165,7 +165,7 @@ static void video_audio_display(VideoState *s)
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        SDL_SetRenderDrawColor(player->renderer, 0, 0, 255, 255);
 
         for (ch = 1; ch < nb_display_channels; ch++) {
             y = s->ytop + ch * h;
@@ -222,7 +222,7 @@ static void video_audio_display(VideoState *s)
                 }
                 SDL_UnlockTexture(s->vis_texture);
             }
-            SDL_RenderCopy(renderer, s->vis_texture, NULL, NULL);
+            SDL_RenderCopy(player->renderer, s->vis_texture, NULL, NULL);
         }
         if (!s->paused)
             s->xpos++;
@@ -230,7 +230,7 @@ static void video_audio_display(VideoState *s)
 }
 
 
-void stream_component_close(VideoState *is, int stream_index)
+void stream_component_close(Player *player, VideoState *is, int stream_index)
 {
     AVFormatContext *ic = is->ic;
     AVCodecParameters *codecpar;
@@ -242,7 +242,7 @@ void stream_component_close(VideoState *is, int stream_index)
     switch (codecpar->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
         decoder_abort(&is->auddec, &is->sampq);
-        SDL_CloseAudioDevice(audio_dev);
+        SDL_CloseAudioDevice(player->audio_dev);
         decoder_destroy(&is->auddec);
         swr_free(&is->swr_ctx);
         av_freep(&is->audio_buf1);
@@ -287,7 +287,7 @@ void stream_component_close(VideoState *is, int stream_index)
     }
 }
 
-void stream_close(VideoState *is)
+void stream_close(Player* player, VideoState *is)
 {
     /* XXX: use a special url_shutdown call to abort parse cleanly */
     is->abort_request = 1;
@@ -295,11 +295,11 @@ void stream_close(VideoState *is)
 
     /* close each stream */
     if (is->audio_stream >= 0)
-        stream_component_close(is, is->audio_stream);
+        stream_component_close(player, is, is->audio_stream);
     if (is->video_stream >= 0)
-        stream_component_close(is, is->video_stream);
+        stream_component_close(player, is, is->video_stream);
     if (is->subtitle_stream >= 0)
-        stream_component_close(is, is->subtitle_stream);
+        stream_component_close(player, is, is->subtitle_stream);
 
     avformat_close_input(&is->ic);
 
@@ -324,22 +324,22 @@ void stream_close(VideoState *is)
     av_free(is);
 }
 
-int video_open(VideoState *is)
+int video_open(Player *player, VideoState *is)
 {
     int w,h;
 
-    w = screen_width ? screen_width : default_width;
-    h = screen_height ? screen_height : default_height;
+    w = player->screen_width ? player->screen_width : player->default_width;
+    h = player->screen_height ? player->screen_height : player->default_height;
 
-    if (!window_title)
-        window_title = input_filename;
-    SDL_SetWindowTitle(window, window_title);
+    if (!player->window_title)
+        player->window_title = player->input_filename;
+    SDL_SetWindowTitle(player->window, player->window_title);
 
-    SDL_SetWindowSize(window, w, h);
-    SDL_SetWindowPosition(window, screen_left, screen_top);
-    if (is_full_screen)
-        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    SDL_ShowWindow(window);
+    SDL_SetWindowSize(player->window, w, h);
+    SDL_SetWindowPosition(player->window, player->screen_left, player->screen_top);
+    if (player->is_full_screen)
+        SDL_SetWindowFullscreen(player->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    SDL_ShowWindow(player->window);
 
     is->width  = w;
     is->height = h;
@@ -347,18 +347,18 @@ int video_open(VideoState *is)
     return 0;
 }
 
-void video_display(VideoState *is)
+void video_display(Player *player, VideoState *is)
 {
     if (!is->width)
-        video_open(is);
+        video_open(player, is);
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(player->renderer, 0, 0, 0, 255);
+    SDL_RenderClear(player->renderer);
     if (is->audio_st && is->show_mode != SHOW_MODE_VIDEO)
         video_audio_display(is);
     else if (is->video_st)
         video_image_display(is);
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(player->renderer);
 }
 
 int get_master_sync_type(VideoState *is) {
@@ -540,7 +540,7 @@ int queue_picture(VideoState *is, AVFrame *src_frame, double pts, double duratio
     return 0;
 }
 
-int get_video_frame(VideoState *is, AVFrame *frame)
+int get_video_frame(Player* player, VideoState *is, AVFrame *frame)
 {
     int got_picture;
 
@@ -555,7 +555,7 @@ int get_video_frame(VideoState *is, AVFrame *frame)
 
         frame->sample_aspect_ratio = av_guess_sample_aspect_ratio(is->ic, is->video_st, frame);
 
-        if (framedrop>0 || (framedrop && get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER)) {
+        if (player->framedrop>0 || (player->framedrop && get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER)) {
             if (frame->pts != AV_NOPTS_VALUE) {
                 double diff = dpts - get_master_clock(is);
                 if (!isnan(diff) && fabs(diff) < AV_NOSYNC_THRESHOLD &&

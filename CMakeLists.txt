@@ -27,6 +27,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
     INCLUDE(cmake/utils/ffmpeg.cmake)
     INCLUDE(cmake/utils/sdl.cmake)
 
+    add_subdirectory(src)
+
     include(CTest)
     enable_testing()
     add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose)

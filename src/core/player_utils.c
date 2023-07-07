@@ -20,7 +20,7 @@ int cmp_audio_fmts(enum AVSampleFormat fmt1, int64_t channel_count1,
 }
 
 // llw TODO
-void fill_rectangle(int x, int y, int w, int h)
+void fill_rectangle(Player *player, int x, int y, int w, int h)
 {
     SDL_Rect rect;
     rect.x = x;
@@ -28,7 +28,7 @@ void fill_rectangle(int x, int y, int w, int h)
     rect.w = w;
     rect.h = h;
     if (w && h)
-        SDL_RenderFillRect(renderer, &rect);
+        SDL_RenderFillRect(player->renderer, &rect);
 }
 
 int compute_mod(int a, int b)
