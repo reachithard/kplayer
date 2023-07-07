@@ -1,6 +1,6 @@
 include(ExternalProject)
 
-SET(SDL_CONFIGURE_COMMAND cd ${SRC_DIR}/SDL-release-2.28.0 && ./configure --disable-x86asm --prefix=${CMAKE_INSTALL_PREFIX})
+SET(SDL_CONFIGURE_COMMAND cd ${SRC_DIR}/SDL-release-2.28.0 && ./configure CFLAGS=-fPIC CXXFLAGS=-fPIC --disable-x86asm --prefix=${CMAKE_INSTALL_PREFIX})
 SET(SDL_BUILD_COMMAND cd ${SRC_DIR}/SDL-release-2.28.0 && make)
 SET(SDL_INSTALL_COMMAND cd ${SRC_DIR}/SDL-release-2.28.0 && make install)
 

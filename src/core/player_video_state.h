@@ -51,11 +51,11 @@ int synchronize_audio(VideoState *is, int nb_samples);
 
 int audio_decode_frame(VideoState *is);
 
-int stream_component_open(VideoState *is, int stream_index);
+int stream_component_open(Player *player, VideoState *is, int stream_index);
 
-void stream_cycle_channel(VideoState *is, int codec_type);
+void stream_cycle_channel(Player *player, VideoState *is, int codec_type);
 
-void toggle_full_screen(VideoState *is);
+void toggle_full_screen(Player *player, VideoState *is);
 
 void toggle_audio_display(VideoState *is);
 

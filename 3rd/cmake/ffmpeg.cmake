@@ -1,6 +1,6 @@
 include(ExternalProject)
 
-SET(FFMPEG_CONFIGURE_COMMAND cd ${SRC_DIR}/FFmpeg-release-6.0 && ./configure --disable-x86asm --prefix=${CMAKE_INSTALL_PREFIX})
+SET(FFMPEG_CONFIGURE_COMMAND cd ${SRC_DIR}/FFmpeg-release-6.0 && ./configure --enable-pic --disable-x86asm --prefix=${CMAKE_INSTALL_PREFIX})
 SET(FFMPEG_BUILD_COMMAND cd ${SRC_DIR}/FFmpeg-release-6.0 && make)
 SET(FFMPEG_INSTALL_COMMAND cd ${SRC_DIR}/FFmpeg-release-6.0 && make install)
 

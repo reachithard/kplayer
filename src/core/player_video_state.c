@@ -1,6 +1,7 @@
 #include "player_video_state.h"
 
 #include "player_clock.h"
+#include "player.h"
 
 void video_image_display(Player *player, VideoState *is)
 {
@@ -355,9 +356,9 @@ void video_display(Player *player, VideoState *is)
     SDL_SetRenderDrawColor(player->renderer, 0, 0, 0, 255);
     SDL_RenderClear(player->renderer);
     if (is->audio_st && is->show_mode != SHOW_MODE_VIDEO)
-        video_audio_display(is);
+        video_audio_display(player, is);
     else if (is->video_st)
-        video_image_display(is);
+        video_image_display(player, is);
     SDL_RenderPresent(player->renderer);
 }
 
@@ -740,7 +741,7 @@ int audio_decode_frame(VideoState *is)
     return resampled_data_size;
 }
 
-int stream_component_open(VideoState *is, int stream_index)
+int stream_component_open(Player *player, VideoState *is, int stream_index)
 {
     AVFormatContext *ic = is->ic;
     AVCodecContext *avctx;
@@ -751,7 +752,7 @@ int stream_component_open(VideoState *is, int stream_index)
     int sample_rate;
     AVChannelLayout ch_layout = { 0 };
     int ret = 0;
-    int stream_lowres = lowres;
+    int stream_lowres = player->lowres;
 
     if (stream_index < 0 || stream_index >= ic->nb_streams)
         return -1;
@@ -768,9 +769,9 @@ int stream_component_open(VideoState *is, int stream_index)
     codec = avcodec_find_decoder(avctx->codec_id);
 
     switch(avctx->codec_type){
-        case AVMEDIA_TYPE_AUDIO   : is->last_audio_stream    = stream_index; forced_codec_name =    audio_codec_name; break;
-        case AVMEDIA_TYPE_SUBTITLE: is->last_subtitle_stream = stream_index; forced_codec_name = subtitle_codec_name; break;
-        case AVMEDIA_TYPE_VIDEO   : is->last_video_stream    = stream_index; forced_codec_name =    video_codec_name; break;
+        case AVMEDIA_TYPE_AUDIO   : is->last_audio_stream    = stream_index; forced_codec_name =    player->audio_codec_name; break;
+        case AVMEDIA_TYPE_SUBTITLE: is->last_subtitle_stream = stream_index; forced_codec_name = player->subtitle_codec_name; break;
+        case AVMEDIA_TYPE_VIDEO   : is->last_video_stream    = stream_index; forced_codec_name =    player->video_codec_name; break;
     }
     if (forced_codec_name)
         codec = avcodec_find_decoder_by_name(forced_codec_name);
@@ -791,10 +792,10 @@ int stream_component_open(VideoState *is, int stream_index)
     }
     avctx->lowres = stream_lowres;
 
-    if (fast)
+    if (player->fast)
         avctx->flags2 |= AV_CODEC_FLAG2_FAST;
 
-    opts = filter_codec_opts(codec_opts, avctx->codec_id, ic, ic->streams[stream_index], codec);
+    opts = filter_codec_opts(player->codec_opts, avctx->codec_id, ic, ic->streams[stream_index], codec);
     if (!av_dict_get(opts, "threads", NULL, 0))
         av_dict_set(&opts, "threads", "auto", 0);
     if (stream_lowres)
@@ -862,7 +863,7 @@ int stream_component_open(VideoState *is, int stream_index)
         }
         if ((ret = decoder_start(&is->auddec, audio_thread, "audio_decoder", is)) < 0)
             goto out;
-        SDL_PauseAudioDevice(audio_dev, 0);
+        SDL_PauseAudioDevice(player->audio_dev, 0);
         break;
     case AVMEDIA_TYPE_VIDEO:
         is->video_stream = stream_index;
@@ -897,7 +898,7 @@ out:
     return ret;
 }
 
-void stream_cycle_channel(VideoState *is, int codec_type)
+void stream_cycle_channel(Player *player, VideoState *is, int codec_type)
 {
     AVFormatContext *ic = is->ic;
     int start_index, stream_index;
@@ -971,14 +972,14 @@ void stream_cycle_channel(VideoState *is, int codec_type)
            old_index,
            stream_index);
 
-    stream_component_close(is, old_index);
-    stream_component_open(is, stream_index);
+    stream_component_close(player, is, old_index);
+    stream_component_open(player, is, stream_index);
 }
 
-void toggle_full_screen(VideoState *is)
+void toggle_full_screen(Player *player, VideoState *is)
 {
-    is_full_screen = !is_full_screen;
-    SDL_SetWindowFullscreen(window, is_full_screen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    player->is_full_screen = !player->is_full_screen;
+    SDL_SetWindowFullscreen(player->window, player->is_full_screen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 }
 
 void toggle_audio_display(VideoState *is)

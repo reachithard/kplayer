@@ -4,6 +4,10 @@
 #include "player_video_state.h"
 #include "player_frame_queue.h"
 
+
+const char program_name[] = "ffplay"; // llw TODO 研究这个做什么用的
+const int program_birth_year = 2003; // llw TODO 研究这个做什么用的
+
 static void set_sdl_yuv_conversion_mode(AVFrame *frame)
 {
 #if SDL_VERSION_ATLEAST(2,0,8)
@@ -25,7 +29,7 @@ static void sigterm_handler(int sig)
     exit(123);
 }
 
-static void video_refresh(void *opaque, double *remaining_time)
+void video_refresh(void *opaque, double *remaining_time)
 {
     Player *player = (Player*)opaque;
     VideoState *is = (VideoState*)player->is;
@@ -140,7 +144,7 @@ retry:
 display:
         /* display picture */
         if (!player->display_disable && is->force_refresh && is->show_mode == SHOW_MODE_VIDEO && is->pictq.rindex_shown)
-            video_display(is);
+            video_display(player, is);
     }
     is->force_refresh = 0;
     if (player->show_status) {
@@ -208,7 +212,7 @@ static int refresh_thread(void *arg) {
     }
 }
 
-static int audio_thread(void *arg)
+int audio_thread(void *arg)
 {
     VideoState *is = arg;
     AVFrame *frame = av_frame_alloc();
@@ -293,7 +297,7 @@ static int audio_thread(void *arg)
     return ret;
 }
 
-static int video_thread(void *arg)
+int video_thread(void *arg)
 {
     Player *player = (Player*)arg;
     VideoState *is = player->is;
@@ -401,7 +405,7 @@ static int video_thread(void *arg)
     return 0;
 }
 
-static int subtitle_thread(void *arg)
+int subtitle_thread(void *arg)
 {
     VideoState *is = arg;
     Frame *sp;
@@ -746,18 +750,18 @@ static int read_thread(void *arg)
 
     /* open the streams */
     if (st_index[AVMEDIA_TYPE_AUDIO] >= 0) {
-        stream_component_open(is, st_index[AVMEDIA_TYPE_AUDIO]);
+        stream_component_open(player, is, st_index[AVMEDIA_TYPE_AUDIO]);
     }
 
     ret = -1;
     if (st_index[AVMEDIA_TYPE_VIDEO] >= 0) {
-        ret = stream_component_open(is, st_index[AVMEDIA_TYPE_VIDEO]);
+        ret = stream_component_open(player, is, st_index[AVMEDIA_TYPE_VIDEO]);
     }
     if (is->show_mode == SHOW_MODE_NONE)
         is->show_mode = ret >= 0 ? SHOW_MODE_VIDEO : SHOW_MODE_RDFT;
 
     if (st_index[AVMEDIA_TYPE_SUBTITLE] >= 0) {
-        stream_component_open(is, st_index[AVMEDIA_TYPE_SUBTITLE]);
+        stream_component_open(player, is, st_index[AVMEDIA_TYPE_SUBTITLE]);
     }
 
     if (is->video_stream < 0 && is->audio_stream < 0) {

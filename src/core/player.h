@@ -13,4 +13,9 @@ void ResetPlayer(Player *player);
 int PlayerPlay(Player *player);
 int PlayerStart(Player *player, uint64_t msec);
 
+int audio_thread(void *arg);
+void video_refresh(void *opaque, double *remaining_time);
+int video_thread(void *arg);
+int subtitle_thread(void *arg);
+
 #endif // _PLAYER_H_
