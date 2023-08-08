@@ -6,7 +6,7 @@ int packet_queue_put_private(PacketQueue *q, AVPacket *pkt)
     int ret;
 
     if (q->abort_request)
-       return -1;
+        return -1;
 
 
     pkt1.pkt = pkt;
@@ -51,6 +51,7 @@ int packet_queue_put_nullpacket(PacketQueue *q, AVPacket *pkt, int stream_index)
     return packet_queue_put(q, pkt);
 }
 
+/* packet queue handling */
 int packet_queue_init(PacketQueue *q)
 {
     memset(q, 0, sizeof(PacketQueue));
@@ -112,6 +113,7 @@ void packet_queue_start(PacketQueue *q)
     SDL_UnlockMutex(q->mutex);
 }
 
+/* return < 0 if aborted, 0 if no packet and > 0 if packet.  */
 int packet_queue_get(PacketQueue *q, AVPacket *pkt, int block, int *serial)
 {
     MyAVPacketList pkt1;

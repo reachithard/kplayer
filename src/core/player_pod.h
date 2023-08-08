@@ -7,6 +7,11 @@
 #include <signal.h>
 #include <stdint.h>
 
+//#include "config.h"
+//#include "config_components.h"
+
+#include "player_def.h"
+
 #include "libavutil/avstring.h"
 #include "libavutil/channel_layout.h"
 #include "libavutil/eval.h"
@@ -24,7 +29,6 @@
 #include "libswscale/swscale.h"
 #include "libavutil/opt.h"
 #include "libavcodec/avfft.h"
-#include "libavcodec/avcodec.h"
 #include "libswresample/swresample.h"
 
 #if CONFIG_AVFILTER
@@ -33,14 +37,15 @@
 # include "libavfilter/buffersrc.h"
 #endif
 
-#include "SDL.h"
-#include "SDL_thread.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_thread.h"
+#include "libavcodec/avcodec.h"
 
-// #include "cmdutils.h"
-// #include "opt_common.h"
+//#include "cmdutils.h"
+//#include "opt_common.h"
 
-// const char program_name[] = "ffplay"; // llw TODO 研究这个做什么用的
-// const int program_birth_year = 2003; // llw TODO 研究这个做什么用的
+//const char program_name[] = "ffplay";
+//const int program_birth_year = 2003;
 
 #define MAX_QUEUE_SIZE (15 * 1024 * 1024)
 #define MIN_FRAMES 25
@@ -86,7 +91,7 @@
 
 #define USE_ONEPASS_SUBTITLE_RENDER 1
 
-static unsigned sws_flags = SWS_BICUBIC; // llw TODO 研究这个做什么用的
+//static unsigned sws_flags = SWS_BICUBIC;
 
 typedef struct MyAVPacketList {
     AVPacket *pkt;
@@ -179,7 +184,7 @@ typedef struct Decoder {
 
 enum ShowMode {
     SHOW_MODE_NONE = -1, SHOW_MODE_VIDEO = 0, SHOW_MODE_WAVES, SHOW_MODE_RDFT, SHOW_MODE_NB
-} ;
+};
 
 typedef struct VideoState {
     SDL_Thread *read_tid;
@@ -286,10 +291,12 @@ typedef struct VideoState {
 } VideoState;
 
 typedef struct Player {
-    VideoState *is;
-    SDL_Thread *refresh_tid;
+    VideoState is;
+    char *program_name;
+    int program_birth_year;
+    unsigned sws_flags;
 
-/* options specified by the user */
+    /* options specified by the user */
     const AVInputFormat *file_iformat;
     const char *input_filename;
     const char *window_title;
@@ -330,25 +337,25 @@ typedef struct Player {
     double rdftspeed;
     int64_t cursor_last_shown;
     int cursor_hidden;
-    #if CONFIG_AVFILTER
+#if CONFIG_AVFILTER
     const char **vfilters_list;
     int nb_vfilters;
     char *afilters;
-    #endif
+#endif
     int autorotate;
     int find_stream_info;
     int filter_nbthreads;
 
-    /* current context */
+/* current context */
     int is_full_screen;
     int64_t audio_callback_time;
-
-    #define FF_QUIT_EVENT    (SDL_USEREVENT + 2)
 
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_RendererInfo renderer_info;
     SDL_AudioDeviceID audio_dev;
+
+    int dummy;
 
     AVDictionary *sws_dict;
     AVDictionary *swr_opts;
@@ -356,8 +363,7 @@ typedef struct Player {
     AVDictionary *codec_opts;
 } Player;
 
-typedef struct KPlayerGlobal {
-    const char* dynamic_dir;
-    int log_level;
-} KPlayerGlobal;
+#define FF_QUIT_EVENT    (SDL_USEREVENT + 2)
+
+
 #endif // _PLAYER_POD_H_

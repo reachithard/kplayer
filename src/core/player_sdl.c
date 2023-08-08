@@ -4,29 +4,40 @@ static const struct TextureFormatEntry {
     enum AVPixelFormat format;
     int texture_fmt;
 } sdl_texture_format_map[] = {
-    { AV_PIX_FMT_RGB8,           SDL_PIXELFORMAT_RGB332 },
-    { AV_PIX_FMT_RGB444,         SDL_PIXELFORMAT_RGB444 },
-    { AV_PIX_FMT_RGB555,         SDL_PIXELFORMAT_RGB555 },
-    { AV_PIX_FMT_BGR555,         SDL_PIXELFORMAT_BGR555 },
-    { AV_PIX_FMT_RGB565,         SDL_PIXELFORMAT_RGB565 },
-    { AV_PIX_FMT_BGR565,         SDL_PIXELFORMAT_BGR565 },
-    { AV_PIX_FMT_RGB24,          SDL_PIXELFORMAT_RGB24 },
-    { AV_PIX_FMT_BGR24,          SDL_PIXELFORMAT_BGR24 },
-    { AV_PIX_FMT_0RGB32,         SDL_PIXELFORMAT_RGB888 },
-    { AV_PIX_FMT_0BGR32,         SDL_PIXELFORMAT_BGR888 },
-    { AV_PIX_FMT_NE(RGB0, 0BGR), SDL_PIXELFORMAT_RGBX8888 },
-    { AV_PIX_FMT_NE(BGR0, 0RGB), SDL_PIXELFORMAT_BGRX8888 },
-    { AV_PIX_FMT_RGB32,          SDL_PIXELFORMAT_ARGB8888 },
-    { AV_PIX_FMT_RGB32_1,        SDL_PIXELFORMAT_RGBA8888 },
-    { AV_PIX_FMT_BGR32,          SDL_PIXELFORMAT_ABGR8888 },
-    { AV_PIX_FMT_BGR32_1,        SDL_PIXELFORMAT_BGRA8888 },
-    { AV_PIX_FMT_YUV420P,        SDL_PIXELFORMAT_IYUV },
-    { AV_PIX_FMT_YUYV422,        SDL_PIXELFORMAT_YUY2 },
-    { AV_PIX_FMT_UYVY422,        SDL_PIXELFORMAT_UYVY },
-    { AV_PIX_FMT_NONE,           SDL_PIXELFORMAT_UNKNOWN },
+        { AV_PIX_FMT_RGB8,           SDL_PIXELFORMAT_RGB332 },
+        { AV_PIX_FMT_RGB444,         SDL_PIXELFORMAT_RGB444 },
+        { AV_PIX_FMT_RGB555,         SDL_PIXELFORMAT_RGB555 },
+        { AV_PIX_FMT_BGR555,         SDL_PIXELFORMAT_BGR555 },
+        { AV_PIX_FMT_RGB565,         SDL_PIXELFORMAT_RGB565 },
+        { AV_PIX_FMT_BGR565,         SDL_PIXELFORMAT_BGR565 },
+        { AV_PIX_FMT_RGB24,          SDL_PIXELFORMAT_RGB24 },
+        { AV_PIX_FMT_BGR24,          SDL_PIXELFORMAT_BGR24 },
+        { AV_PIX_FMT_0RGB32,         SDL_PIXELFORMAT_RGB888 },
+        { AV_PIX_FMT_0BGR32,         SDL_PIXELFORMAT_BGR888 },
+        { AV_PIX_FMT_NE(RGB0, 0BGR), SDL_PIXELFORMAT_RGBX8888 },
+        { AV_PIX_FMT_NE(BGR0, 0RGB), SDL_PIXELFORMAT_BGRX8888 },
+        { AV_PIX_FMT_RGB32,          SDL_PIXELFORMAT_ARGB8888 },
+        { AV_PIX_FMT_RGB32_1,        SDL_PIXELFORMAT_RGBA8888 },
+        { AV_PIX_FMT_BGR32,          SDL_PIXELFORMAT_ABGR8888 },
+        { AV_PIX_FMT_BGR32_1,        SDL_PIXELFORMAT_BGRA8888 },
+        { AV_PIX_FMT_YUV420P,        SDL_PIXELFORMAT_IYUV },
+        { AV_PIX_FMT_YUYV422,        SDL_PIXELFORMAT_YUY2 },
+        { AV_PIX_FMT_UYVY422,        SDL_PIXELFORMAT_UYVY },
+        { AV_PIX_FMT_NONE,           SDL_PIXELFORMAT_UNKNOWN },
 };
 
-int realloc_texture(Player *player, SDL_Texture **texture, Uint32 new_format, int new_width, int new_height, SDL_BlendMode blendmode, int init_texture)
+void fill_rectangle(SDL_Renderer *renderer, int x, int y, int w, int h)
+{
+    SDL_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.w = w;
+    rect.h = h;
+    if (w && h)
+        SDL_RenderFillRect(renderer, &rect);
+}
+
+int realloc_texture(SDL_Renderer *renderer, SDL_Texture **texture, Uint32 new_format, int new_width, int new_height, SDL_BlendMode blendmode, int init_texture)
 {
     Uint32 format;
     int access, w, h;
@@ -35,7 +46,7 @@ int realloc_texture(Player *player, SDL_Texture **texture, Uint32 new_format, in
         int pitch;
         if (*texture)
             SDL_DestroyTexture(*texture);
-        if (!(*texture = SDL_CreateTexture(player->renderer, new_format, SDL_TEXTUREACCESS_STREAMING, new_width, new_height)))
+        if (!(*texture = SDL_CreateTexture(renderer, new_format, SDL_TEXTUREACCESS_STREAMING, new_width, new_height)))
             return -1;
         if (SDL_SetTextureBlendMode(*texture, blendmode) < 0)
             return -1;
@@ -51,8 +62,8 @@ int realloc_texture(Player *player, SDL_Texture **texture, Uint32 new_format, in
 }
 
 void calculate_display_rect(SDL_Rect *rect,
-                                   int scr_xleft, int scr_ytop, int scr_width, int scr_height,
-                                   int pic_width, int pic_height, AVRational pic_sar)
+                            int scr_xleft, int scr_ytop, int scr_width, int scr_height,
+                            int pic_width, int pic_height, AVRational pic_sar)
 {
     AVRational aspect_ratio = pic_sar;
     int64_t width, height, x, y;
@@ -95,19 +106,19 @@ void get_sdl_pix_fmt_and_blendmode(int format, Uint32 *sdl_pix_fmt, SDL_BlendMod
     }
 }
 
-int upload_texture(Player *player, SDL_Texture **tex, AVFrame *frame, struct SwsContext **img_convert_ctx) {
+int upload_texture(SDL_Renderer *renderer, SDL_Texture **tex, AVFrame *frame, struct SwsContext **img_convert_ctx, int sws_flags) {
     int ret = 0;
     Uint32 sdl_pix_fmt;
     SDL_BlendMode sdl_blendmode;
     get_sdl_pix_fmt_and_blendmode(frame->format, &sdl_pix_fmt, &sdl_blendmode);
-    if (realloc_texture(player, tex, sdl_pix_fmt == SDL_PIXELFORMAT_UNKNOWN ? SDL_PIXELFORMAT_ARGB8888 : sdl_pix_fmt, frame->width, frame->height, sdl_blendmode, 0) < 0)
+    if (realloc_texture(renderer, tex, sdl_pix_fmt == SDL_PIXELFORMAT_UNKNOWN ? SDL_PIXELFORMAT_ARGB8888 : sdl_pix_fmt, frame->width, frame->height, sdl_blendmode, 0) < 0)
         return -1;
     switch (sdl_pix_fmt) {
         case SDL_PIXELFORMAT_UNKNOWN:
             /* This should only happen if we are not using avfilter... */
             *img_convert_ctx = sws_getCachedContext(*img_convert_ctx,
-                frame->width, frame->height, frame->format, frame->width, frame->height,
-                AV_PIX_FMT_BGRA, sws_flags, NULL, NULL, NULL);
+                                                    frame->width, frame->height, frame->format, frame->width, frame->height,
+                                                    AV_PIX_FMT_BGRA, sws_flags, NULL, NULL, NULL);
             if (*img_convert_ctx != NULL) {
                 uint8_t *pixels[4];
                 int pitch[4];
@@ -124,12 +135,12 @@ int upload_texture(Player *player, SDL_Texture **tex, AVFrame *frame, struct Sws
         case SDL_PIXELFORMAT_IYUV:
             if (frame->linesize[0] > 0 && frame->linesize[1] > 0 && frame->linesize[2] > 0) {
                 ret = SDL_UpdateYUVTexture(*tex, NULL, frame->data[0], frame->linesize[0],
-                                                       frame->data[1], frame->linesize[1],
-                                                       frame->data[2], frame->linesize[2]);
+                                           frame->data[1], frame->linesize[1],
+                                           frame->data[2], frame->linesize[2]);
             } else if (frame->linesize[0] < 0 && frame->linesize[1] < 0 && frame->linesize[2] < 0) {
                 ret = SDL_UpdateYUVTexture(*tex, NULL, frame->data[0] + frame->linesize[0] * (frame->height                    - 1), -frame->linesize[0],
-                                                       frame->data[1] + frame->linesize[1] * (AV_CEIL_RSHIFT(frame->height, 1) - 1), -frame->linesize[1],
-                                                       frame->data[2] + frame->linesize[2] * (AV_CEIL_RSHIFT(frame->height, 1) - 1), -frame->linesize[2]);
+                                           frame->data[1] + frame->linesize[1] * (AV_CEIL_RSHIFT(frame->height, 1) - 1), -frame->linesize[1],
+                                           frame->data[2] + frame->linesize[2] * (AV_CEIL_RSHIFT(frame->height, 1) - 1), -frame->linesize[2]);
             } else {
                 av_log(NULL, AV_LOG_ERROR, "Mixed negative and positive linesizes are not supported.\n");
                 return -1;
@@ -146,14 +157,18 @@ int upload_texture(Player *player, SDL_Texture **tex, AVFrame *frame, struct Sws
     return ret;
 }
 
-void set_default_window_size(Player *player, int width, int height, AVRational sar)
+void set_sdl_yuv_conversion_mode(AVFrame *frame)
 {
-    SDL_Rect rect;
-    int max_width  = player->screen_width  ? player->screen_width  : INT_MAX;
-    int max_height = player->screen_height ? player->screen_height : INT_MAX;
-    if (max_width == INT_MAX && max_height == INT_MAX)
-        max_height = height;
-    calculate_display_rect(&rect, 0, 0, max_width, max_height, width, height, sar);
-    player->default_width  = rect.w;
-    player->default_height = rect.h;
+#if SDL_VERSION_ATLEAST(2,0,8)
+    SDL_YUV_CONVERSION_MODE mode = SDL_YUV_CONVERSION_AUTOMATIC;
+    if (frame && (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUYV422 || frame->format == AV_PIX_FMT_UYVY422)) {
+        if (frame->color_range == AVCOL_RANGE_JPEG)
+            mode = SDL_YUV_CONVERSION_JPEG;
+        else if (frame->colorspace == AVCOL_SPC_BT709)
+            mode = SDL_YUV_CONVERSION_BT709;
+        else if (frame->colorspace == AVCOL_SPC_BT470BG || frame->colorspace == AVCOL_SPC_SMPTE170M)
+            mode = SDL_YUV_CONVERSION_BT601;
+    }
+    SDL_SetYUVConversionMode(mode); /* FIXME: no support for linear transfer */
+#endif
 }

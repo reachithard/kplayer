@@ -1,4 +1,5 @@
 #include "player_frame_queue.h"
+#include "player_frame.h"
 
 int frame_queue_init(FrameQueue *f, PacketQueue *pktq, int max_size, int keep_last)
 {
@@ -112,13 +113,11 @@ void frame_queue_next(FrameQueue *f)
     SDL_UnlockMutex(f->mutex);
 }
 
-/* return the number of undisplayed frames in the queue */
 int frame_queue_nb_remaining(FrameQueue *f)
 {
     return f->size - f->rindex_shown;
 }
 
-/* return last shown position */
 int64_t frame_queue_last_pos(FrameQueue *f)
 {
     Frame *fp = &f->queue[f->rindex];
@@ -127,3 +126,4 @@ int64_t frame_queue_last_pos(FrameQueue *f)
     else
         return -1;
 }
+
