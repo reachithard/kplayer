@@ -37,6 +37,8 @@ if(WIN32)
 
     add_executable(test_player ${CMAKE_CURRENT_SOURCE_DIR}/core/test_player.cpp)
     target_link_libraries(test_player PRIVATE player)
+
+    add_subdirectory(qt_ui)
 else(WIN32)
     find_package(FFmpeg REQUIRED)
     find_package(sdl2 REQUIRED)

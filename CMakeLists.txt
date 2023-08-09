@@ -4,10 +4,6 @@ project(kplayer)
 set(CMAKE_CXX_STANDARD 14)
 set(C_STANDARD 99)
 
-if(WIN32)
-    add_subdirectory(src)
-    add_subdirectory(test)
-else(WIN32)
 SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-Bsymbolic") #  relocation R_X86_64_PC32 against symbol `ff_M24A' can not be used when making a shared object; recompile with -fPIC
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -17,6 +13,11 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE} version")
 SET(BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/output)
 
+if(WIN32)
+    INCLUDE(cmake/utils/intf.cmake)
+    add_subdirectory(src)
+    add_subdirectory(test)
+else(WIN32)
 if(DOWNLOAD_THIRDPARTY)
     add_subdirectory(3rd)
 else(DOWNLOAD_THIRDPARTY)
