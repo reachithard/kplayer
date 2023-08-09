@@ -187,6 +187,7 @@ enum ShowMode {
 };
 
 typedef struct VideoState {
+    SDL_Thread *refresh_tid;
     SDL_Thread *read_tid;
     const AVInputFormat *iformat;
     int abort_request;
@@ -361,6 +362,9 @@ typedef struct Player {
     AVDictionary *swr_opts;
     AVDictionary *format_opts;
     AVDictionary *codec_opts;
+
+    int refresh_loop;
+    void *w_id;
 } Player;
 
 #define FF_QUIT_EVENT    (SDL_USEREVENT + 2)

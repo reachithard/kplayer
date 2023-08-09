@@ -79,7 +79,9 @@ int is_realtime(AVFormatContext *s);
 
 int read_thread(void *arg);
 
-VideoState *stream_open(const char *filename,
+int refresh_thread(void *arg);
+
+VideoState *stream_open(Player *player, const char *filename,
                         const AVInputFormat *iformat);
 
 void stream_cycle_channel(VideoState *is, int codec_type);
