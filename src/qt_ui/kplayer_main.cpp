@@ -14,6 +14,8 @@ extern "C" {
 KplayerMain::KplayerMain(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::KplayerMain)
+    , playList(this)
+    , title(this)
 {
     ui->setupUi(this);
 
@@ -26,20 +28,32 @@ KplayerMain::~KplayerMain()
 }
 
 void KplayerMain::TestPlay() {
-    int ret = player_global_init();
-    if (ret) {
-        return;
-    }
+//    int ret = player_global_init();
+//    if (ret) {
+//        return;
+//    }
+//
+//    Player *player = player_create();
+//    if (!player) {
+//        return;
+//    }
+//
+//    player->input_filename = "C:\\Users\\luo\\Documents\\Captura\\2023-08-09\\02-40-14.mp4";
+//    ret = player_play(player);
+//    if (ret) {
+//        return;
+//    }
+}
 
-    Player *player = player_create();
-    if (!player) {
-        return;
-    }
+bool KplayerMain::Init() {
+    QWidget *em = new QWidget(this);
+    ui->PlaylistWid->setTitleBarWidget(em);
+    ui->PlaylistWid->setWidget(&playList);
+    //ui->PlaylistWid->setFixedWidth(100);
 
-    player->input_filename = "C:\\Users\\luo\\Documents\\Captura\\2023-08-09\\02-40-14.mp4";
-    ret = player_play(player);
-    if (ret) {
-        return;
-    }
+    QWidget *emTitle = new QWidget(this);
+    ui->TitleWid->setTitleBarWidget(emTitle);
+    ui->TitleWid->setWidget(&title);
+    return true;
 }
 

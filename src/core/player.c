@@ -64,6 +64,7 @@ Player *player_create() {
 
     // SDL_RendererInfo renderer_info = {0};
     player->refresh_loop = 1;
+    player->refresh_thread = 0;
     player->w_id = NULL;
     return player;
 }
@@ -79,10 +80,15 @@ int player_play(Player *player) {
         return -1;
     }
 
-    is->refresh_tid = SDL_CreateThread(refresh_thread, "refresh_thread", is);
-    if (!is->refresh_tid) {
-        av_log(NULL, AV_LOG_FATAL, "Failed to initialize refresh thread!\n");
-        return -1;
+    if (player->refresh_thread) {
+        is->refresh_tid = SDL_CreateThread(refresh_thread, "refresh_thread", is);
+        if (!is->refresh_tid) {
+            av_log(NULL, AV_LOG_FATAL, "Failed to initialize refresh thread!\n");
+            return -1;
+        }
+    } else {
+        refresh_thread(is);
     }
+
     return 0;
 }

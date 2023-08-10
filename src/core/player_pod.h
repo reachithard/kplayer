@@ -364,6 +364,7 @@ typedef struct Player {
     AVDictionary *codec_opts;
 
     int refresh_loop;
+    int refresh_thread;
     void *w_id;
 } Player;
 
