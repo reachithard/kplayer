@@ -92,3 +92,27 @@ int player_play(Player *player) {
 
     return 0;
 }
+
+int player_pause(Player *player) {
+
+}
+
+int player_mute(Player *player) {
+
+}
+
+int player_update_volume(Player *player, int incr) {
+
+}
+
+int player_next_frame(Player *player) {
+
+}
+
+int player_stop(Player *player) {
+    // stop和destory的区别是 stop不会全部清空
+}
+
+void player_destroy(Player *player) {
+
+}
