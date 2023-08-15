@@ -64,7 +64,7 @@ Player *player_create() {
 
     // SDL_RendererInfo renderer_info = {0};
     player->refresh_loop = 1;
-    player->refresh_thread = 0;
+    player->refresh_thread = 1;
     player->w_id = NULL;
     return player;
 }

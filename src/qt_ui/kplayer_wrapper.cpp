@@ -61,3 +61,7 @@ int KplayerWrapper::VideoToggleMute() {
     player_mute(player);
     return KPLAYER_SUCCESS;
 }
+
+void KplayerWrapper::SetWid(void *wid) {
+    player->w_id = wid;
+}

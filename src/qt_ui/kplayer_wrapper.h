@@ -26,6 +26,8 @@ public:
 
     int Init();
 
+    void SetWid(void *wid);
+
     int VideoPlay(const QString &url);
 
     int VideoToggleMute();

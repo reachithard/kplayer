@@ -54,6 +54,10 @@ bool KplayerMain::Init() {
     QWidget *emTitle = new QWidget(this);
     ui->TitleWid->setTitleBarWidget(emTitle);
     ui->TitleWid->setWidget(&title);
+
+    if (ui->CtrlBarWid->Init() || ui->ShowWid->Init()) {
+        return false;
+    }
     return true;
 }
 

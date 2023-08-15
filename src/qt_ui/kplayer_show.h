@@ -7,6 +7,8 @@
 
 #include <QWidget>
 
+#include "kplayer_wrapper.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class KplayerShow; }
@@ -20,8 +22,13 @@ public:
 
     ~KplayerShow() override;
 
+    int Init();
+
+    int PlayOrPause(const QString &url);
 private:
     Ui::KplayerShow *ui;
+
+    KplayerWrapper wrapper;
 };
 
 

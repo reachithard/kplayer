@@ -21,7 +21,7 @@ public:
 
     ~KplayerGlobalInit();
 
-    bool Init();
+    int Init();
 };
 
 

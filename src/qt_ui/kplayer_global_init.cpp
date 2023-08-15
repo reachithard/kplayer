@@ -23,9 +23,9 @@ KplayerGlobalInit::~KplayerGlobalInit() {
 
 }
 
-bool KplayerGlobalInit::Init() {
+int KplayerGlobalInit::Init() {
     if (player_global_init() != 0) {
         return KPLAYER_GLOBAL_INIT_ERROR;
     }
-    return true;
+    return 0;
 }

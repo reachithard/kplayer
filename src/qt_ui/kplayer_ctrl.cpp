@@ -16,3 +16,7 @@ KplayerCtrl::KplayerCtrl(QWidget *parent) :
 KplayerCtrl::~KplayerCtrl() {
     delete ui;
 }
+
+int KplayerCtrl::Init() {
+    return 0;
+}
