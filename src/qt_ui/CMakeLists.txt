@@ -18,6 +18,8 @@ set(PROJECT_SOURCES
         kplayer_ctrl.cpp
         kplayer_ctrl.h
         kplayer_ctrl.ui
+        kplayer_global_init.cpp
+        kplayer_global_init.h
         kplayer_setting.cpp
         kplayer_setting.h
         kplayer_setting.ui
