@@ -19,12 +19,10 @@ public:
     ~KplayerMain();
 
     bool Init();
-protected:
-    void TestPlay();
 
 private:
     Ui::KplayerMain *ui;
-    KplayerPlayList playList;
-    KplayerTitle title;
+    KplayerPlayList playList_;
+    KplayerTitle title_;
 };
 #endif // KPLAYERMAIN_H

@@ -9,6 +9,7 @@
 
 #include "kplayer_wrapper.h"
 
+#include <mutex>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class KplayerShow; }
@@ -25,10 +26,17 @@ public:
     int Init();
 
     int PlayOrPause(const QString &url);
-private:
-    Ui::KplayerShow *ui;
 
-    KplayerWrapper wrapper;
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+private:
+    void AdjustSizeShow();
+
+    Ui::KplayerShow *ui;
+    KplayerWrapper wrapper_;
+    uint32_t width_ = 0;
+    uint32_t height_ = 0;
+    std::mutex refresh_lock_;
 };
 
 

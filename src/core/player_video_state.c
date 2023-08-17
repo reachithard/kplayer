@@ -69,6 +69,10 @@ void video_image_display(VideoState *is)
         }
         vp->uploaded = 1;
         vp->flip_v = vp->frame->linesize[0] < 0;
+
+        if (player->callbacks.video_dimensions_changed) {
+            player->callbacks.video_dimensions_changed(player->userdata, vp->frame->width, vp->frame->height);
+        }
     }
 
     SDL_RenderCopyEx(player->renderer, is->vid_texture, NULL, &rect, 0, NULL, vp->flip_v ? SDL_FLIP_VERTICAL : 0);
@@ -489,8 +493,13 @@ void stream_toggle_pause(VideoState *is)
 
 void toggle_pause(VideoState *is)
 {
+    Player *player = container_of(is, Player, is);
     stream_toggle_pause(is);
     is->step = 0;
+
+    if (player->callbacks.video_pause_state) {
+        player->callbacks.video_pause_state(player->userdata, is->paused);
+    }
 }
 
 void toggle_mute(VideoState *is)
@@ -500,9 +509,14 @@ void toggle_mute(VideoState *is)
 
 void update_volume(VideoState *is, int sign, double step)
 {
+    Player *player = container_of(is, Player, is);
     double volume_level = is->audio_volume ? (20 * log(is->audio_volume / (double)SDL_MIX_MAXVOLUME) / log(10)) : -1000.0;
     int new_volume = lrint(SDL_MIX_MAXVOLUME * pow(10.0, (volume_level + sign * step) / 20.0));
     is->audio_volume = av_clip(is->audio_volume == new_volume ? (is->audio_volume + sign) : new_volume, 0, SDL_MIX_MAXVOLUME);
+
+    if (player->callbacks.video_volume) {
+        player->callbacks.video_volume(player->userdata, is->audio_volume * 1.0 / SDL_MIX_MAXVOLUME);
+    }
 }
 
 void step_to_next_frame(VideoState *is)
@@ -679,6 +693,10 @@ void video_refresh(void *opaque, double *remaining_time)
             video_display(is);
     }
     is->force_refresh = 0;
+    if (player->callbacks.video_play_seconds) {
+        player->callbacks.video_play_seconds(player->userdata, get_master_clock(is));
+    }
+
     if (player->show_status) {
         AVBPrint buf;
         static int64_t last_time;
@@ -1612,6 +1630,10 @@ int read_thread(void *arg)
 
     is->realtime = is_realtime(ic);
 
+    if (player->callbacks.video_total_seconds) {
+        player->callbacks.video_total_seconds(player->userdata, ic->duration / 1000000LL);
+    }
+
     if (player->show_status)
         av_dump_format(ic, 0, is->filename, 0);
 
@@ -1759,6 +1781,10 @@ int read_thread(void *arg)
         if (!is->paused &&
             (!is->audio_st || (is->auddec.finished == is->audioq.serial && frame_queue_nb_remaining(&is->sampq) == 0)) &&
             (!is->video_st || (is->viddec.finished == is->videoq.serial && frame_queue_nb_remaining(&is->pictq) == 0))) {
+            if (player->callbacks.video_stop) {
+                player->callbacks.video_stop(player->userdata);
+            }
+
             if (player->loop != 1 && (!player->loop || --player->loop)) {
                 stream_seek(is, player->start_time != AV_NOPTS_VALUE ? player->start_time : 0, 0, 0);
             } else if (player->autoexit) {
@@ -1881,6 +1907,15 @@ VideoState *stream_open(Player *player, const char *filename,
     is->audio_volume = player->startup_volume;
     is->muted = 0;
     is->av_sync_type = player->av_sync_type;
+
+    if (player->callbacks.video_volume) {
+        player->callbacks.video_volume(player->userdata, player->startup_volume * 1.0 / SDL_MIX_MAXVOLUME);
+    }
+
+    if (player->callbacks.video_pause_state) {
+        player->callbacks.video_pause_state(player->userdata, is->paused);
+    }
+
     is->read_tid     = SDL_CreateThread(read_thread, "read_thread", is);
     if (!is->read_tid) {
         av_log(NULL, AV_LOG_FATAL, "SDL_CreateThread(): %s\n", SDL_GetError());

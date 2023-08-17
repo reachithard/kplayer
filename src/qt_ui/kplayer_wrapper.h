@@ -38,7 +38,15 @@ public:
 
     int VideoStop();
 private:
-    Player *player = nullptr;
+    static void VideoDimensionsChanged(void *userdata, int width, int height);
+    static void VideoPlaySeconds(void *userdata, int sec);
+    static void VideoTotalSeconds(void *userdata, int sec);
+    static void VideoStop(void *userdata);
+    static void VideoVolume(void *userdata, double volume);
+    static void VideoPauseState(void *userdata, int state);
+    static void VideoStopFinished(void *userdata);
+    static void VideoPlayStart(void *userdata, const char *filename);
+    Player *player_ = nullptr;
 };
 
 

@@ -74,6 +74,10 @@ int player_play(Player *player) {
         return -1;
     }
 
+    if (player->callbacks.video_play_start) {
+        player->callbacks.video_play_start(player->userdata, player->input_filename);
+    }
+
     VideoState *is = stream_open(player, player->input_filename, player->file_iformat);
     if (!is) {
         av_log(NULL, AV_LOG_FATAL, "Failed to initialize VideoState!\n");

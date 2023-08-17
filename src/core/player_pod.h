@@ -291,6 +291,17 @@ typedef struct VideoState {
     SDL_cond *continue_read_thread;
 } VideoState;
 
+typedef struct PlayerCallback {
+    void (*video_dimensions_changed)(void *userdata, int width, int height);
+    void (*video_play_seconds)(void *userdata, int sec);
+    void (*video_total_seconds)(void *userdata, int sec);
+    void (*video_stop)(void *userdata);
+    void (*video_volume)(void *userdata, double volume);
+    void (*video_pause_state)(void *userdata, int state);
+    void (*video_stop_finished)(void *userdata);
+    void (*video_play_start)(void *userdata, const char *filename);
+} PlayerCallback;
+
 typedef struct Player {
     VideoState is;
     char *program_name;
@@ -366,6 +377,8 @@ typedef struct Player {
     int refresh_loop;
     int refresh_thread;
     void *w_id;
+    void *userdata;
+    PlayerCallback callbacks;
 } Player;
 
 #define FF_QUIT_EVENT    (SDL_USEREVENT + 2)
