@@ -76,33 +76,57 @@ void KplayerWrapper::SetWid(void *wid) {
 }
 
 void KplayerWrapper::VideoDimensionsChanged(void *userdata, int width, int height) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoDimensionsChanged(width, height);
+    }
 }
 
 void KplayerWrapper::VideoPlaySeconds(void *userdata, int sec) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoPlaySeconds(sec);
+    }
 }
 
 void KplayerWrapper::VideoTotalSeconds(void *userdata, int sec) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoTotalSeconds(sec);
+    }
 }
 
 void KplayerWrapper::VideoStop(void *userdata) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoStop();
+    }
 }
 
 void KplayerWrapper::VideoVolume(void *userdata, double volume) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoVolume(volume);
+    }
 }
 
 void KplayerWrapper::VideoPauseState(void *userdata, int state) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoPauseState(state);
+    }
 }
 
 void KplayerWrapper::VideoStopFinished(void *userdata) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoStopFinished();
+    }
 }
 
 void KplayerWrapper::VideoPlayStart(void *userdata, const char *filename) {
-
+    if (userdata) {
+        KplayerWrapper *wrapper = reinterpret_cast<KplayerWrapper*>(userdata);
+        emit wrapper->SigVideoPlayStart(filename);
+    }
 }

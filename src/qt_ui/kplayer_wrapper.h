@@ -37,6 +37,17 @@ public:
     int VideoNextFrame();
 
     int VideoStop();
+
+signals:
+    void SigVideoDimensionsChanged(int width, int height);
+    void SigVideoPlaySeconds(int sec);
+    void SigVideoTotalSeconds(int sec);
+    void SigVideoStop();
+    void SigVideoVolume(double volume);
+    void SigVideoPauseState(int state);
+    void SigVideoStopFinished();
+    void SigVideoPlayStart(const char *filename);
+
 private:
     static void VideoDimensionsChanged(void *userdata, int width, int height);
     static void VideoPlaySeconds(void *userdata, int sec);
