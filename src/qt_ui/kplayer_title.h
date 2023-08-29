@@ -6,7 +6,7 @@
 #define KPLAYER_KPLAYER_TITLE_H
 
 #include <QWidget>
-
+#include <QMenu>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class KplayerTitle; }
@@ -20,6 +20,13 @@ public:
 
     ~KplayerTitle() override;
 
+    bool Init();
+
+signals:
+    void SigClose();
+    void SigMin();
+    void SigMaxOrNormal();
+    void SigFullScreen();
 private:
     Ui::KplayerTitle *ui;
 };

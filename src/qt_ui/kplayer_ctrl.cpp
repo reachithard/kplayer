@@ -17,6 +17,6 @@ KplayerCtrl::~KplayerCtrl() {
     delete ui;
 }
 
-int KplayerCtrl::Init() {
-    return 0;
+bool KplayerCtrl::Init() {
+    return true;
 }

@@ -2,6 +2,9 @@
 #define KPLAYERMAIN_H
 
 #include <QMainWindow>
+#include <QKeyEvent>
+#include <QPropertyAnimation>
+#include <QRect>
 
 #include "kplayer_play_list.h"
 #include "kplayer_title.h"
@@ -20,8 +23,22 @@ public:
 
     bool Init();
 
+protected:
+    void keyReleaseEvent(QKeyEvent *event);
+
 private:
+    void OnMin();
+    void OnMaxOrNormal();
+    void OnFullScreen();
+    void OnClose();
+
     bool SigConnect();
+
+    QPropertyAnimation *ctrlAnimShow_ = nullptr;
+    QPropertyAnimation *ctrlAnimHide_ = nullptr;
+    QRect ctrlShow_;//控制面板显示区域
+    QRect ctrlHidden_;//控制面板隐藏区域
+
     Ui::KplayerMain *ui;
     KplayerPlayList playList_;
     KplayerTitle title_;

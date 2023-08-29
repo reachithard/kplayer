@@ -7,6 +7,8 @@
 #include "kplayer_show.h"
 #include "ui_kplayer_show.h"
 
+#include <QKeyEvent>
+
 #include "kplayer_errors.h"
 
 KplayerShow::KplayerShow(QWidget *parent) :
@@ -23,19 +25,19 @@ KplayerShow::~KplayerShow() {
     delete ui;
 }
 
-int KplayerShow::Init() {
+bool KplayerShow::Init() {
     int ret = wrapper_.Init();
     if (ret != KPLAYER_SUCCESS) {
-        return ret;
+        return false;
     }
 
     // 进行connect
     (void) connect(&wrapper_, &KplayerWrapper::SigVideoDimensionsChanged, this, &KplayerShow::OnVideoDimensionsChanged);
 
     wrapper_.SetWid((void*)ui->label->winId());
-    QString url = "C:\\Users\\luo\\Documents\\Captura\\2023-08-09\\02-40-14.mp4";
+    QString url = "C:\\workspace\\kplayer\\res\\test.mp4";
     PlayOrPause(url);
-    return 0;
+    return true;
 }
 
 int KplayerShow::PlayOrPause(const QString &url) {
@@ -76,4 +78,16 @@ void KplayerShow::OnVideoDimensionsChanged(int width, int height) {
     width_ = width;
     height_ = height;
     AdjustSizeShow();
+}
+
+void KplayerShow::Close() {
+
+}
+
+void KplayerShow::keyReleaseEvent(QKeyEvent *event) {
+    switch (event->key()) {
+        case Qt::Key_F:
+            emit SigShowFullScreen();
+            break;
+    }
 }

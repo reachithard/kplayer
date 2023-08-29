@@ -20,7 +20,7 @@ public:
 
     ~KplayerCtrl() override;
 
-    int Init();
+    bool Init();
 private:
     Ui::KplayerCtrl *ui;
 };

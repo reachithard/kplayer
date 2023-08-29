@@ -20,6 +20,7 @@ public:
 
     ~KplayerPlayList() override;
 
+    bool Init();
 private:
     Ui::KplayerPlayList *ui;
 };

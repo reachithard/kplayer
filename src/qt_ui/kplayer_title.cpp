@@ -16,3 +16,12 @@ KplayerTitle::KplayerTitle(QWidget *parent) :
 KplayerTitle::~KplayerTitle() {
     delete ui;
 }
+
+bool KplayerTitle::Init() {
+    setAttribute(Qt::WA_TranslucentBackground);
+    (void)connect(ui->MinBtn, &QPushButton::clicked, this, &KplayerTitle::SigMin);
+    (void)connect(ui->MaxBtn, &QPushButton::clicked, this, &KplayerTitle::SigMaxOrNormal);
+    (void)connect(ui->FullScreenBtn, &QPushButton::clicked, this, &KplayerTitle::SigFullScreen);
+    (void)connect(ui->CloseBtn, &QPushButton::clicked, this, &KplayerTitle::SigClose);
+    return true;
+}

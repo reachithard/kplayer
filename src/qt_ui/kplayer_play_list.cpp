@@ -16,3 +16,7 @@ KplayerPlayList::KplayerPlayList(QWidget *parent) :
 KplayerPlayList::~KplayerPlayList() {
     delete ui;
 }
+
+bool KplayerPlayList::Init() {
+    return true;
+}

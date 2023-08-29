@@ -23,11 +23,19 @@ public:
 
     ~KplayerShow() override;
 
-    int Init();
+    bool Init();
 
     int PlayOrPause(const QString &url);
 
+    void Close();
 signals:
+    void SigShowFullScreen();
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+
+private:
     void OnVideoPlaySeconds(int sec);
     void OnVideoTotalSeconds(int sec);
     void OnVideoStop();
@@ -36,9 +44,6 @@ signals:
     void OnVideoStopFinished();
     void OnVideoPlayStart(const char *filename);
 
-protected:
-    void resizeEvent(QResizeEvent *event) override;
-private:
     void AdjustSizeShow();
 
     void OnVideoDimensionsChanged(int width, int height);
