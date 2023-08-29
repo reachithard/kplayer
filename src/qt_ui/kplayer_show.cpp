@@ -29,6 +29,9 @@ int KplayerShow::Init() {
         return ret;
     }
 
+    // 进行connect
+    (void) connect(&wrapper_, &KplayerWrapper::SigVideoDimensionsChanged, this, &KplayerShow::OnVideoDimensionsChanged);
+
     wrapper_.SetWid((void*)ui->label->winId());
     QString url = "C:\\Users\\luo\\Documents\\Captura\\2023-08-09\\02-40-14.mp4";
     PlayOrPause(url);
@@ -67,4 +70,10 @@ void KplayerShow::AdjustSizeShow() {
 
         ui->label->setGeometry(x, y, width, height);
     }
+}
+
+void KplayerShow::OnVideoDimensionsChanged(int width, int height) {
+    width_ = width;
+    height_ = height;
+    AdjustSizeShow();
 }

@@ -18,6 +18,11 @@ KplayerMain::KplayerMain(QWidget *parent)
     , title_(this)
 {
     ui->setupUi(this);
+
+    // todo style
+
+    setWindowFlags(Qt::FramelessWindowHint /*| Qt::WindowSystemMenuHint*/ | Qt::WindowMinimizeButtonHint);
+    setMouseTracking(true);
 }
 
 KplayerMain::~KplayerMain()
@@ -34,9 +39,18 @@ bool KplayerMain::Init() {
     ui->TitleWid->setTitleBarWidget(emTitle);
     ui->TitleWid->setWidget(&title_);
 
+    if (!SigConnect()) {
+        return false;
+    }
+
     if (ui->CtrlBarWid->Init() || ui->ShowWid->Init()) {
         return false;
     }
+    return true;
+}
+
+bool KplayerMain::SigConnect() {
+
     return true;
 }
 

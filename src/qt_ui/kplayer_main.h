@@ -21,6 +21,7 @@ public:
     bool Init();
 
 private:
+    bool SigConnect();
     Ui::KplayerMain *ui;
     KplayerPlayList playList_;
     KplayerTitle title_;

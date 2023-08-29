@@ -27,10 +27,21 @@ public:
 
     int PlayOrPause(const QString &url);
 
+signals:
+    void OnVideoPlaySeconds(int sec);
+    void OnVideoTotalSeconds(int sec);
+    void OnVideoStop();
+    void OnVideoVolume(double volume);
+    void OnVideoPauseState(int state);
+    void OnVideoStopFinished();
+    void OnVideoPlayStart(const char *filename);
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 private:
     void AdjustSizeShow();
+
+    void OnVideoDimensionsChanged(int width, int height);
 
     Ui::KplayerShow *ui;
     KplayerWrapper wrapper_;
