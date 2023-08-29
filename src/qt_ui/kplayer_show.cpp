@@ -18,7 +18,7 @@ KplayerShow::KplayerShow(QWidget *parent) :
     ui->label->setUpdatesEnabled(false);
     setMouseTracking(true);
     setAcceptDrops(true);
-    setAttribute(Qt::WA_OpaquePaintEvent);
+//    setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
 KplayerShow::~KplayerShow() {

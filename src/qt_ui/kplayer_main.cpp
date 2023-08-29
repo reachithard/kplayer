@@ -5,6 +5,7 @@
 #include <QScreen>
 #include <QRect>
 #include <QVariant>
+#include <QDialog>
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,9 +37,10 @@ KplayerMain::~KplayerMain()
 }
 
 bool KplayerMain::Init() {
-    QWidget *em = new QWidget(this);
-    ui->PlaylistWid->setTitleBarWidget(em);
+    QDialog *dockDialog = new QDialog(this); // <-----added a parent widget for the dock
+    ui->PlaylistWid->setTitleBarWidget(dockDialog);
     ui->PlaylistWid->setWidget(&playList_);
+//    ui->PlaylistWid->setAttribute(Qt::WA_WState_ExplicitShowHide);
 
     QWidget *emTitle = new QWidget(this);
     ui->TitleWid->setTitleBarWidget(emTitle);
@@ -64,6 +66,8 @@ bool KplayerMain::SigConnect() {
     (void)connect(&title_, &KplayerTitle::SigClose, this, &KplayerMain::OnClose, Qt::ConnectionType::UniqueConnection);
 
     (void)connect(ui->ShowWid, &KplayerShow::SigShowFullScreen, this, &KplayerMain::OnFullScreen);
+
+    (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigShowOrHidePlaylist, this, &KplayerMain::OnShowOrHidePlaylist);
     return true;
 }
 
@@ -134,6 +138,14 @@ void KplayerMain::keyReleaseEvent(QKeyEvent *event) {
         case Qt::Key_F:
             OnFullScreen();
             break;
+    }
+}
+
+void KplayerMain::OnShowOrHidePlaylist() {
+    if (ui->PlaylistWid->isHidden()) {
+        ui->PlaylistWid->show();
+    } else {
+        ui->PlaylistWid->hide();
     }
 }
 

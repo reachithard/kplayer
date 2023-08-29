@@ -301,7 +301,7 @@
       </widget>
      </item>
      <item row="0" column="9">
-      <widget class="QPushButton" name="SettingBtn">
+      <widget class="QPushButton" name="PlaylistCtrlBtn">
        <property name="minimumSize">
         <size>
          <width>30</width>
@@ -320,7 +320,7 @@
       </widget>
      </item>
      <item row="0" column="8">
-      <widget class="QPushButton" name="PlaylistCtrlBtn">
+      <widget class="QPushButton" name="SpeedBtn">
        <property name="minimumSize">
         <size>
          <width>30</width>
@@ -339,7 +339,7 @@
         </font>
        </property>
        <property name="text">
-        <string>1</string>
+        <string/>
        </property>
       </widget>
      </item>

@@ -21,7 +21,11 @@ public:
     ~KplayerCtrl() override;
 
     bool Init();
+
+signals:
+    void SigShowOrHidePlaylist();
 private:
+    void SigConnect();
     Ui::KplayerCtrl *ui;
 };
 

@@ -31,6 +31,7 @@ private:
     void OnMaxOrNormal();
     void OnFullScreen();
     void OnClose();
+    void OnShowOrHidePlaylist();
 
     bool SigConnect();
 

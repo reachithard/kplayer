@@ -18,5 +18,10 @@ KplayerCtrl::~KplayerCtrl() {
 }
 
 bool KplayerCtrl::Init() {
+    SigConnect();
     return true;
+}
+
+void KplayerCtrl::SigConnect() {
+    connect(ui->PlaylistCtrlBtn, &QPushButton::clicked, this, &KplayerCtrl::SigShowOrHidePlaylist);
 }
