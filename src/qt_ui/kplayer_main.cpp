@@ -67,10 +67,11 @@ bool KplayerMain::SigConnect() {
 
     (void)connect(ui->ShowWid, &KplayerShow::SigShowFullScreen, this, &KplayerMain::OnFullScreen);
 
-    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigPlayOrPause, this, &KplayerMain::OnPlayOrPause);
-    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigMute, this, &KplayerMain::OnMute);
-    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigForward, this, &KplayerMain::OnForward);
-    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigBackward, this, &KplayerMain::OnBackward);
+    (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigPlayOrPause, this, &KplayerMain::OnPlayOrPause);
+    (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigMute, this, &KplayerMain::OnMute);
+    (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigForward, this, &KplayerMain::OnForward);
+    (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigBackward, this, &KplayerMain::OnBackward);
+    (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigSpeedChanged, this, &KplayerMain::OnSpeedChanged);
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigShowOrHidePlaylist, this, &KplayerMain::OnShowOrHidePlaylist);
 
     return true;
@@ -169,5 +170,9 @@ void KplayerMain::OnForward() {
 
 void KplayerMain::OnBackward() {
     ui->ShowWid->Seek(-3);
+}
+
+void KplayerMain::OnSpeedChanged(float speed) {
+    ui->ShowWid->SetSpeed(speed);
 }
 

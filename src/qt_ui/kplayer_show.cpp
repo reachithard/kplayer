@@ -97,3 +97,7 @@ int KplayerShow::ToggleMute() {
 int KplayerShow::Seek(double incr) {
     return wrapper_.VideoSeek(incr);
 }
+
+int KplayerShow::SetSpeed(float speed) {
+    return wrapper_.VideoSetSpeed(speed);
+}

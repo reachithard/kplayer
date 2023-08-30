@@ -40,6 +40,7 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_thread.h"
 #include "libavcodec/avcodec.h"
+#include "player_soundtouch.h"
 
 //#include "cmdutils.h"
 //#include "opt_common.h"
@@ -230,8 +231,10 @@ typedef struct VideoState {
     int audio_hw_buf_size;
     uint8_t *audio_buf;
     uint8_t *audio_buf1;
+    short *audio_touch_buf;
     unsigned int audio_buf_size; /* in bytes */
     unsigned int audio_buf1_size;
+    unsigned int audio_touch_buf_size;
     int audio_buf_index; /* in bytes */
     int audio_write_buf_size;
     int audio_volume;
@@ -379,6 +382,8 @@ typedef struct Player {
     void *w_id;
     void *userdata;
     PlayerCallback callbacks;
+    float play_rate;
+    PlayerSoundtouch *touch;
 } Player;
 
 #define FF_QUIT_EVENT    (SDL_USEREVENT + 2)

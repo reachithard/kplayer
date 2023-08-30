@@ -34,6 +34,8 @@ public:
 
     int VideoToggleMute();
 
+    int VideoSetSpeed(float speed);
+
     int VideoUpdateVolume();
 
     int VideoNextFrame();

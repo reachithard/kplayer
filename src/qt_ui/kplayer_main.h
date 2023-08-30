@@ -23,6 +23,9 @@ public:
 
     bool Init();
 
+public slots:
+    void OnSpeedChanged(float speed);
+
 protected:
     void keyReleaseEvent(QKeyEvent *event);
 

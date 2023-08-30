@@ -66,6 +66,8 @@ Player *player_create() {
     player->refresh_loop = 1;
     player->refresh_thread = 1;
     player->w_id = NULL;
+    player->play_rate = 1.0f;
+    player->touch = create_touch();
     return player;
 }
 
@@ -107,32 +109,43 @@ int player_seek(Player *player, double incr) {
             pos = player->is.ic->start_time / (double)AV_TIME_BASE;
         stream_seek(&player->is, (int64_t)(pos * AV_TIME_BASE), (int64_t)(incr * AV_TIME_BASE), 0);
     }
+    return 0;
+}
+
+int player_set_speed(Player *player, float speed) {
+    if (player) {
+        player->play_rate = speed;
+    }
+    return 0;
 }
 
 int player_pause(Player *player) {
     if (player) {
         toggle_pause(&player->is);
     }
+    return 0;
 }
 
 int player_mute(Player *player) {
     if (player) {
         toggle_mute(&player->is);
     }
+    return 0;
 }
 
 int player_update_volume(Player *player, int incr) {
-
+    return 0;
 }
 
 int player_next_frame(Player *player) {
-
+    return 0;
 }
 
 int player_stop(Player *player) {
     // stop和destory的区别是 stop不会全部清空
+    return 0;
 }
 
 void player_destroy(Player *player) {
-
+    destroy_touch(player->touch);
 }

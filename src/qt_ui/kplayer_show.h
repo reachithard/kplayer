@@ -31,6 +31,8 @@ public:
 
     int Seek(double incr);
 
+    int SetSpeed(float speed);
+
     void Close();
 signals:
     void SigShowFullScreen();

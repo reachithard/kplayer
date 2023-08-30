@@ -32,4 +32,14 @@ void KplayerCtrl::SigConnect() {
     connect(ui->BackwardBtn, &QPushButton::clicked, this, &KplayerCtrl::SigBackward);
     connect(ui->ForwardBtn, &QPushButton::clicked, this, &KplayerCtrl::SigForward);
     connect(ui->PlaylistCtrlBtn, &QPushButton::clicked, this, &KplayerCtrl::SigShowOrHidePlaylist);
+    connect(ui->SpeedComb, SIGNAL(currentIndexChanged(int)),this,SLOT(OnSpeedChanged(int)));
+}
+
+void KplayerCtrl::OnSpeedChanged(int idx) {
+    QString current = ui->SpeedComb->itemText(idx);
+    bool ok = false;
+    float speed = current.toFloat(&ok);
+    if (ok) {
+        emit SigSpeedChanged(speed);
+    }
 }

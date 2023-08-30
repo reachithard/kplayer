@@ -27,6 +27,8 @@ if(WIN32)
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_pod.h
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_sdl.c
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_sdl.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/player_soundtouch.c
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/player_soundtouch.h
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_utils.c
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_utils.h
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_video_state.c
@@ -34,7 +36,7 @@ if(WIN32)
 
     add_library(player SHARED ${CMAKE_CURRENT_SOURCE_DIR}/core/player.c)
     target_sources(player PRIVATE ${PLAYER_SRC})
-    target_link_libraries(player PRIVATE avdevice avfilter avformat  avcodec swresample swscale avutil sdl2)
+    target_link_libraries(player PRIVATE avdevice avfilter avformat  avcodec swresample swscale avutil sdl2 SoundTouchDll_x64)
 
     add_executable(test_player ${CMAKE_CURRENT_SOURCE_DIR}/core/test_player.cpp)
     target_link_libraries(test_player PRIVATE player)

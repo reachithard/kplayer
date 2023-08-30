@@ -1108,10 +1108,12 @@ int audio_decode_frame(VideoState *is)
     av_unused double audio_clock0;
     int wanted_nb_samples;
     Frame *af;
+    int translate_time = 1;
 
     if (is->paused)
         return -1;
 
+reload:
     do {
 #if defined(_WIN32)
         while (frame_queue_nb_remaining(&is->sampq) == 0) {
@@ -1186,6 +1188,26 @@ int audio_decode_frame(VideoState *is)
         }
         is->audio_buf = is->audio_buf1;
         resampled_data_size = len2 * is->audio_tgt.ch_layout.nb_channels * av_get_bytes_per_sample(is->audio_tgt.fmt);
+        int bytes_per_sample = av_get_bytes_per_sample(is->audio_tgt.fmt);
+
+        if (player->play_rate != 1.0f && !is->abort_request) {
+            av_fast_malloc(&is->audio_touch_buf, &is->audio_touch_buf_size, out_size * translate_time);
+            for (int i = 0; i < (resampled_data_size / 2); i++)
+            {
+                is->audio_touch_buf[i] = (is->audio_buf1[i * 2] | (is->audio_buf1[i * 2 + 1] << 8));
+            }
+
+            int ret_len = touch_translate(player->touch, is->audio_touch_buf, (float)(player->play_rate), (float)(1.0f / player->play_rate),
+                                                   resampled_data_size / 2, bytes_per_sample, is->audio_tgt.ch_layout.nb_channels, af->frame->sample_rate);
+            if (ret_len > 0) {
+                is->audio_buf = (uint8_t*)is->audio_touch_buf;
+                resampled_data_size = ret_len;
+            } else {
+                translate_time++;
+                goto reload;
+            }
+        }
+
     } else {
         is->audio_buf = af->frame->data[0];
         resampled_data_size = data_size;

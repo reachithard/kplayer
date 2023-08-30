@@ -139,3 +139,12 @@ int KplayerWrapper::VideoSeek(double incr) {
     player_seek(player_, incr);
     return KPLAYER_SUCCESS;
 }
+
+int KplayerWrapper::VideoSetSpeed(float speed) {
+    if (!player_) {
+        return KPLAYER_WRAPPER_INIT_ERROR;
+    }
+
+    player_set_speed(player_, speed);
+    return 0;
+}

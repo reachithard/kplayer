@@ -22,12 +22,16 @@ public:
 
     bool Init();
 
+public slots:
+    void OnSpeedChanged(int idx);
+
 signals:
     void SigPlayOrPause();
     void SigMute();
     void SigForward();
     void SigBackward();
     void SigShowOrHidePlaylist();
+    void SigSpeedChanged(float speed);
 private:
     void SigConnect();
     Ui::KplayerCtrl *ui;
