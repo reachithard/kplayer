@@ -97,12 +97,28 @@ int player_play(Player *player) {
     return 0;
 }
 
-int player_pause(Player *player) {
+int player_seek(Player *player, double incr) {
+    if (player) {
+        double pos = get_master_clock(&player->is);
+        if (isnan(pos))
+            pos = (double)player->is.seek_pos / AV_TIME_BASE;
+        pos += incr;
+        if (player->is.ic->start_time != AV_NOPTS_VALUE && pos < player->is.ic->start_time / (double)AV_TIME_BASE)
+            pos = player->is.ic->start_time / (double)AV_TIME_BASE;
+        stream_seek(&player->is, (int64_t)(pos * AV_TIME_BASE), (int64_t)(incr * AV_TIME_BASE), 0);
+    }
+}
 
+int player_pause(Player *player) {
+    if (player) {
+        toggle_pause(&player->is);
+    }
 }
 
 int player_mute(Player *player) {
-
+    if (player) {
+        toggle_mute(&player->is);
+    }
 }
 
 int player_update_volume(Player *player, int incr) {

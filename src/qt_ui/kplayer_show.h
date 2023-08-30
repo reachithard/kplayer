@@ -27,6 +27,10 @@ public:
 
     int PlayOrPause(const QString &url);
 
+    int ToggleMute();
+
+    int Seek(double incr);
+
     void Close();
 signals:
     void SigShowFullScreen();

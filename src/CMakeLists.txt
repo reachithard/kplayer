@@ -1,5 +1,6 @@
 if(WIN32)
     include_directories(${CMAKE_SOURCE_DIR}/3rd/windows/include)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qt_ui)
     link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/bin)
     link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/lib)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -D__STDC_CONSTANT_MACROS")
@@ -38,7 +39,49 @@ if(WIN32)
     add_executable(test_player ${CMAKE_CURRENT_SOURCE_DIR}/core/test_player.cpp)
     target_link_libraries(test_player PRIVATE player)
 
-    add_subdirectory(qt_ui)
+    set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+
+    find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+    set(PROJECT_SOURCES
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/main.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_main.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_main.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_main.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_about.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_about.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_about.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_ctrl.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_ctrl.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_ctrl.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_global_init.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_global_init.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_setting.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_setting.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_setting.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_show.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_show.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_show.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_title.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_title.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_title.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_play_list.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_play_list.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_play_list.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_wrapper.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_wrapper.h
+            )
+
+    add_executable(kplayer
+            ${PROJECT_SOURCES}
+            )
+
+    target_link_libraries(kplayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets player intf)
 else(WIN32)
     find_package(FFmpeg REQUIRED)
     find_package(sdl2 REQUIRED)

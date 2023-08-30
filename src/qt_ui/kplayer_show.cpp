@@ -15,10 +15,10 @@ KplayerShow::KplayerShow(QWidget *parent) :
         QWidget(parent), ui(new Ui::KplayerShow) {
     ui->setupUi(this);
 
-    ui->label->setUpdatesEnabled(false);
+//    ui->label->setUpdatesEnabled(false);
     setMouseTracking(true);
     setAcceptDrops(true);
-//    setAttribute(Qt::WA_OpaquePaintEvent);
+    ui->label->setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
 KplayerShow::~KplayerShow() {
@@ -35,8 +35,6 @@ bool KplayerShow::Init() {
     (void) connect(&wrapper_, &KplayerWrapper::SigVideoDimensionsChanged, this, &KplayerShow::OnVideoDimensionsChanged);
 
     wrapper_.SetWid((void*)ui->label->winId());
-    QString url = "C:\\workspace\\kplayer\\res\\test.mp4";
-    PlayOrPause(url);
     return true;
 }
 
@@ -90,4 +88,12 @@ void KplayerShow::keyReleaseEvent(QKeyEvent *event) {
             emit SigShowFullScreen();
             break;
     }
+}
+
+int KplayerShow::ToggleMute() {
+    return wrapper_.VideoToggleMute();
+}
+
+int KplayerShow::Seek(double incr) {
+    return wrapper_.VideoSeek(incr);
 }

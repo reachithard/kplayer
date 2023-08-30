@@ -13,6 +13,8 @@ int player_pause(Player *player);
 
 int player_mute(Player *player);
 
+int player_seek(Player *player, double incr);
+
 int player_update_volume(Player *player, int incr);
 
 int player_next_frame(Player *player);

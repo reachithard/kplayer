@@ -23,6 +23,10 @@ public:
     bool Init();
 
 signals:
+    void SigPlayOrPause();
+    void SigMute();
+    void SigForward();
+    void SigBackward();
     void SigShowOrHidePlaylist();
 private:
     void SigConnect();

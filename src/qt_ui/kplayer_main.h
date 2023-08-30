@@ -32,6 +32,10 @@ private:
     void OnFullScreen();
     void OnClose();
     void OnShowOrHidePlaylist();
+    void OnPlayOrPause();
+    void OnMute();
+    void OnForward();
+    void OnBackward();
 
     bool SigConnect();
 

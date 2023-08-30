@@ -130,3 +130,12 @@ void KplayerWrapper::VideoPlayStart(void *userdata, const char *filename) {
         emit wrapper->SigVideoPlayStart(filename);
     }
 }
+
+int KplayerWrapper::VideoSeek(double incr) {
+    if (!player_) {
+        return KPLAYER_WRAPPER_INIT_ERROR;
+    }
+
+    player_seek(player_, incr);
+    return KPLAYER_SUCCESS;
+}

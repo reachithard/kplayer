@@ -30,6 +30,8 @@ public:
 
     int VideoPlay(const QString &url);
 
+    int VideoSeek(double incr);
+
     int VideoToggleMute();
 
     int VideoUpdateVolume();

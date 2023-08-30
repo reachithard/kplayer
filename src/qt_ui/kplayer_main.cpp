@@ -6,6 +6,7 @@
 #include <QRect>
 #include <QVariant>
 #include <QDialog>
+#include <QDebug>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +41,6 @@ bool KplayerMain::Init() {
     QDialog *dockDialog = new QDialog(this); // <-----added a parent widget for the dock
     ui->PlaylistWid->setTitleBarWidget(dockDialog);
     ui->PlaylistWid->setWidget(&playList_);
-//    ui->PlaylistWid->setAttribute(Qt::WA_WState_ExplicitShowHide);
 
     QWidget *emTitle = new QWidget(this);
     ui->TitleWid->setTitleBarWidget(emTitle);
@@ -67,7 +67,12 @@ bool KplayerMain::SigConnect() {
 
     (void)connect(ui->ShowWid, &KplayerShow::SigShowFullScreen, this, &KplayerMain::OnFullScreen);
 
+    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigPlayOrPause, this, &KplayerMain::OnPlayOrPause);
+    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigMute, this, &KplayerMain::OnMute);
+    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigForward, this, &KplayerMain::OnForward);
+    (void) connect(ui->CtrlBarWid, &KplayerCtrl::SigBackward, this, &KplayerMain::OnBackward);
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigShowOrHidePlaylist, this, &KplayerMain::OnShowOrHidePlaylist);
+
     return true;
 }
 
@@ -112,7 +117,6 @@ void KplayerMain::OnFullScreen() {
         ui->CtrlBarWid->windowHandle()->setScreen(pStCurScreen);
 
         ctrlAnimShow_->start();
-
         ui->ShowWid->setFocus();
     } else {
         ctrlAnimShow_->stop();
@@ -142,10 +146,28 @@ void KplayerMain::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void KplayerMain::OnShowOrHidePlaylist() {
+    qDebug() << "OnShowOrHidePlaylist";
     if (ui->PlaylistWid->isHidden()) {
         ui->PlaylistWid->show();
     } else {
         ui->PlaylistWid->hide();
     }
+}
+
+void KplayerMain::OnPlayOrPause() {
+    QString url = "C:\\workspace\\kplayer\\res\\test.mp4";
+    ui->ShowWid->PlayOrPause(url);
+}
+
+void KplayerMain::OnMute() {
+    ui->ShowWid->ToggleMute();
+}
+
+void KplayerMain::OnForward() {
+    ui->ShowWid->Seek(3);
+}
+
+void KplayerMain::OnBackward() {
+    ui->ShowWid->Seek(-3);
 }
 
