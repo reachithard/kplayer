@@ -108,3 +108,7 @@ int KplayerShow::Seek(double incr) {
 int KplayerShow::SetSpeed(float speed) {
     return wrapper_.VideoSetSpeed(speed);
 }
+
+void KplayerShow::OnVolumeChanged(float volume) {
+    wrapper_.VideoUpdateVolume(volume);
+}

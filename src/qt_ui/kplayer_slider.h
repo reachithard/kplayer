@@ -10,17 +10,16 @@
 
 class KplayerSlider : public QSlider{
 Q_OBJECT
-
 public:
     KplayerSlider(QWidget* parent);
     ~KplayerSlider();
+
 protected:
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
     void mouseMoveEvent(QMouseEvent *ev);
 signals:
-    void SigValueChanged();
-
+    void SigSliderValueChanged(int value);//自定义的鼠标单击信号，用于捕获并处理
 private:
     bool pressed;
 };

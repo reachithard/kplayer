@@ -6,7 +6,9 @@
 
 #include "kplayer_ctrl.h"
 #include "ui_kplayer_ctrl.h"
+#include "kplayer_slider.h"
 
+#include <QSlider>
 
 KplayerCtrl::KplayerCtrl(QWidget *parent) :
         QWidget(parent), ui(new Ui::KplayerCtrl) {
@@ -40,6 +42,8 @@ void KplayerCtrl::SigConnect() {
     connect(ui->BackwardBtn, &QPushButton::clicked, this, &KplayerCtrl::SigBackward);
     connect(ui->ForwardBtn, &QPushButton::clicked, this, &KplayerCtrl::SigForward);
     connect(ui->PlaylistCtrlBtn, &QPushButton::clicked, this, &KplayerCtrl::SigShowOrHidePlaylist);
+    connect(ui->PlaySlider, &KplayerSlider::SigSliderValueChanged, this, &KplayerCtrl::OnPlayerChanged);
+    connect(ui->VolumeSlider, &KplayerSlider::SigSliderValueChanged, this, &KplayerCtrl::OnVolumeChanged);
     connect(ui->SpeedComb, SIGNAL(currentIndexChanged(int)),this,SLOT(OnSpeedChanged(int)));
 }
 
@@ -76,4 +80,12 @@ void KplayerCtrl::OnVideoTotalSeconds(int sec) {
 
 void KplayerCtrl::OnVideoVolume(double volume) {
     ui->VolumeSlider->setValue(volume * 100);
+}
+
+void KplayerCtrl::OnPlayerChanged(int value) {
+
+}
+
+void KplayerCtrl::OnVolumeChanged(int value) {
+    SigVolumeChanged(value * 0.01);
 }

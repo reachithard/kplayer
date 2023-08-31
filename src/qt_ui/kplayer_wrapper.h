@@ -36,7 +36,7 @@ public:
 
     int VideoSetSpeed(float speed);
 
-    int VideoUpdateVolume();
+    int VideoUpdateVolume(float volume);
 
     int VideoNextFrame();
 

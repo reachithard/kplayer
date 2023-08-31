@@ -5,7 +5,7 @@
 #include "kplayer_slider.h"
 
 KplayerSlider::KplayerSlider(QWidget *parent) : QSlider(parent) {
-
+    pressed = false;
 }
 
 KplayerSlider::~KplayerSlider() {
@@ -19,6 +19,8 @@ void KplayerSlider::mousePressEvent(QMouseEvent *ev) {
 
 void KplayerSlider::mouseReleaseEvent(QMouseEvent *ev) {
     pressed = false;
+    int pos = value();
+    emit SigSliderValueChanged(pos);
     QSlider::mouseReleaseEvent(ev);
 }
 

@@ -60,7 +60,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QSlider" name="PlaySlider">
+       <widget class="KplayerSlider" name="PlaySlider">
         <property name="maximum">
          <number>65536</number>
         </property>
@@ -113,7 +113,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QSlider" name="VolumeSlider">
+          <widget class="KplayerSlider" name="VolumeSlider">
            <property name="minimumSize">
             <size>
              <width>80</width>
@@ -339,6 +339,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KplayerSlider</class>
+   <extends>QSlider</extends>
+   <header>kplayer_slider.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

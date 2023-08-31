@@ -34,6 +34,8 @@ public:
     int SetSpeed(float speed);
 
     void Close();
+
+    void OnVolumeChanged(float volume);
 signals:
     void SigShowFullScreen();
     void SigVideoPlaySeconds(int sec);

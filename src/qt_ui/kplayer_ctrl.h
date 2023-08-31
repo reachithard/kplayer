@@ -29,6 +29,8 @@ public:
     void OnVideoPauseState(int state);
     void OnVideoStopFinished();
     void OnVideoPlayStart(const char *filename);
+    void OnPlayerChanged(int value);
+    void OnVolumeChanged(int value);
 
 public slots:
     void OnSpeedChanged(int idx);
@@ -40,6 +42,7 @@ signals:
     void SigBackward();
     void SigShowOrHidePlaylist();
     void SigSpeedChanged(float speed);
+    void SigVolumeChanged(float volume);
 private:
     void SigConnect();
     Ui::KplayerCtrl *ui;

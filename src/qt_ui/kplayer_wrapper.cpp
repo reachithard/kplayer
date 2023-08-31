@@ -148,3 +148,12 @@ int KplayerWrapper::VideoSetSpeed(float speed) {
     player_set_speed(player_, speed);
     return 0;
 }
+
+int KplayerWrapper::VideoUpdateVolume(float volume) {
+    if (!player_) {
+        return KPLAYER_WRAPPER_INIT_ERROR;
+    }
+
+    player_update_volume(player_, volume);
+    return 0;
+}
