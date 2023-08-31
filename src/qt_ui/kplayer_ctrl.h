@@ -22,6 +22,14 @@ public:
 
     bool Init();
 
+    void OnVideoPlaySeconds(int sec);
+    void OnVideoTotalSeconds(int sec);
+    void OnVideoStop();
+    void OnVideoVolume(double volume);
+    void OnVideoPauseState(int state);
+    void OnVideoStopFinished();
+    void OnVideoPlayStart(const char *filename);
+
 public slots:
     void OnSpeedChanged(int idx);
 
@@ -35,6 +43,7 @@ signals:
 private:
     void SigConnect();
     Ui::KplayerCtrl *ui;
+    int totalTime_;
 };
 
 

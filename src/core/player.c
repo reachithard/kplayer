@@ -38,7 +38,7 @@ Player *player_create() {
     // const char* wanted_stream_spec[AVMEDIA_TYPE_NB] = {0};
     player->seek_by_bytes = -1;
     player->seek_interval = 10;
-    player->startup_volume = 100;
+    player->startup_volume = 50;
     player->show_status = -1;
     player->av_sync_type = AV_SYNC_AUDIO_MASTER;
     player->start_time = AV_NOPTS_VALUE;

@@ -36,19 +36,17 @@ public:
     void Close();
 signals:
     void SigShowFullScreen();
+    void SigVideoPlaySeconds(int sec);
+    void SigVideoTotalSeconds(int sec);
+    void SigVideoStop();
+    void SigVideoVolume(double volume);
+    void SigVideoPauseState(int state);
+    void SigVideoStopFinished();
+    void SigVideoPlayStart(const char *filename);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
-
-private:
-    void OnVideoPlaySeconds(int sec);
-    void OnVideoTotalSeconds(int sec);
-    void OnVideoStop();
-    void OnVideoVolume(double volume);
-    void OnVideoPauseState(int state);
-    void OnVideoStopFinished();
-    void OnVideoPlayStart(const char *filename);
 
     void AdjustSizeShow();
 

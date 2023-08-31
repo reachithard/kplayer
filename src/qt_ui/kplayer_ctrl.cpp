@@ -11,6 +11,14 @@
 KplayerCtrl::KplayerCtrl(QWidget *parent) :
         QWidget(parent), ui(new Ui::KplayerCtrl) {
     ui->setupUi(this);
+
+    ui->PlaySlider->setMinimum(0);
+    ui->PlaySlider->setMaximum(100);
+    ui->PlaySlider->setSingleStep(1);
+
+    ui->VolumeSlider->setMinimum(0);
+    ui->VolumeSlider->setMaximum(100);
+    ui->VolumeSlider->setSingleStep(1);
 }
 
 KplayerCtrl::~KplayerCtrl() {
@@ -42,4 +50,30 @@ void KplayerCtrl::OnSpeedChanged(int idx) {
     if (ok) {
         emit SigSpeedChanged(speed);
     }
+}
+
+void KplayerCtrl::OnVideoPlaySeconds(int sec) {
+    int thh, tmm, tss;
+    thh = sec / 3600;
+    tmm = (sec % 3600) / 60;
+    tss = (sec % 60);
+    QTime time(thh, tmm, tss);
+
+    ui->VideoPlayTimeTimeEdit->setTime(time);
+    ui->PlaySlider->setValue(((float)sec / (float)totalTime_) * 100);
+}
+
+void KplayerCtrl::OnVideoTotalSeconds(int sec) {
+    totalTime_ = sec;
+    int thh, tmm, tss;
+    thh = sec / 3600;
+    tmm = (sec % 3600) / 60;
+    tss = (sec % 60);
+    QTime time(thh, tmm, tss);
+
+    ui->VideoTotalTimeTimeEdit->setTime(time);
+}
+
+void KplayerCtrl::OnVideoVolume(double volume) {
+    ui->VolumeSlider->setValue(volume * 100);
 }

@@ -32,7 +32,14 @@ bool KplayerShow::Init() {
     }
 
     // 进行connect
-    (void) connect(&wrapper_, &KplayerWrapper::SigVideoDimensionsChanged, this, &KplayerShow::OnVideoDimensionsChanged);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoDimensionsChanged, this, &KplayerShow::OnVideoDimensionsChanged);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoPlaySeconds, this, &KplayerShow::SigVideoPlaySeconds);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoTotalSeconds, this, &KplayerShow::SigVideoTotalSeconds);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoStop, this, &KplayerShow::SigVideoStop);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoVolume, this, &KplayerShow::SigVideoVolume);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoPauseState, this, &KplayerShow::SigVideoPauseState);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoStopFinished, this, &KplayerShow::SigVideoStopFinished);
+    (void)connect(&wrapper_, &KplayerWrapper::SigVideoPlayStart, this, &KplayerShow::SigVideoPlayStart);
 
     wrapper_.SetWid((void*)ui->label->winId());
     return true;

@@ -69,6 +69,8 @@ if(WIN32)
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_show.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_show.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_show.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_slider.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_slider.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_title.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_title.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_title.ui

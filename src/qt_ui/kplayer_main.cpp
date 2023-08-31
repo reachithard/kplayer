@@ -66,6 +66,13 @@ bool KplayerMain::SigConnect() {
     (void)connect(&title_, &KplayerTitle::SigClose, this, &KplayerMain::OnClose, Qt::ConnectionType::UniqueConnection);
 
     (void)connect(ui->ShowWid, &KplayerShow::SigShowFullScreen, this, &KplayerMain::OnFullScreen);
+    (void)connect(ui->ShowWid, &KplayerShow::SigVideoPlaySeconds, ui->CtrlBarWid, &KplayerCtrl::OnVideoPlaySeconds);
+    (void)connect(ui->ShowWid, &KplayerShow::SigVideoTotalSeconds, ui->CtrlBarWid, &KplayerCtrl::OnVideoTotalSeconds);
+//    (void)connect(ui->ShowWid, &KplayerShow::SigVideoStop, ui->CtrlBarWid, &KplayerCtrl::OnVideoStop);
+    (void)connect(ui->ShowWid, &KplayerShow::SigVideoVolume, ui->CtrlBarWid, &KplayerCtrl::OnVideoVolume);
+//    (void)connect(ui->ShowWid, &KplayerShow::SigVideoPauseState, ui->CtrlBarWid, &KplayerCtrl::OnVideoPauseState);
+//    (void)connect(ui->ShowWid, &KplayerShow::SigVideoStopFinished, ui->CtrlBarWid, &KplayerCtrl::OnVideoStopFinished);
+//    (void)connect(ui->ShowWid, &KplayerShow::SigVideoPlayStart, ui->CtrlBarWid, &KplayerCtrl::OnVideoPlayStart);
 
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigPlayOrPause, this, &KplayerMain::OnPlayOrPause);
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigMute, this, &KplayerMain::OnMute);
