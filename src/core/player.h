@@ -17,7 +17,7 @@ int player_seek(Player *player, double incr);
 
 int player_set_speed(Player *player, float speed);
 
-int player_update_volume(Player *player, int incr);
+int player_update_volume(Player *player, float volume);
 
 int player_next_frame(Player *player);
 

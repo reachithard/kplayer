@@ -133,7 +133,11 @@ int player_mute(Player *player) {
     return 0;
 }
 
-int player_update_volume(Player *player, int incr) {
+int player_update_volume(Player *player, float volume) {
+    if (player) {
+        float tmp = volume * SDL_MIX_MAXVOLUME;
+        player->is.audio_volume = tmp;
+    }
     return 0;
 }
 
