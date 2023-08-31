@@ -55,6 +55,8 @@ if(WIN32)
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_main.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_main.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_main.ui
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_media_list.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_media_list.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_about.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_about.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_about.ui

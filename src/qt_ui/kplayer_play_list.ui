@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QListWidget" name="List">
+    <widget class="KplayerMediaList" name="List">
      <property name="focusPolicy">
       <enum>Qt::NoFocus</enum>
      </property>
@@ -59,6 +59,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KplayerMediaList</class>
+   <extends>QListWidget</extends>
+   <header>kplayer_media_list.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

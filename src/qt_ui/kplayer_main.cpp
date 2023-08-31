@@ -81,6 +81,7 @@ bool KplayerMain::SigConnect() {
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigSpeedChanged, this, &KplayerMain::OnSpeedChanged);
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigShowOrHidePlaylist, this, &KplayerMain::OnShowOrHidePlaylist);
 
+    (void)connect(&playList_, &KplayerPlayList::SigPlayVideo, this, &KplayerMain::OnPlayVideo);
     return true;
 }
 
@@ -163,7 +164,7 @@ void KplayerMain::OnShowOrHidePlaylist() {
 }
 
 void KplayerMain::OnPlayOrPause() {
-    QString url = "C:\\workspace\\kplayer\\res\\test.mp4";
+    QString url = playList_.GetCurrentItem();
     ui->ShowWid->PlayOrPause(url);
 }
 
@@ -181,5 +182,12 @@ void KplayerMain::OnBackward() {
 
 void KplayerMain::OnSpeedChanged(float speed) {
     ui->ShowWid->SetSpeed(speed);
+}
+
+void KplayerMain::OnPlayVideo(const QString &url) {
+    if (url.isEmpty()) {
+        return;
+    }
+    ui->ShowWid->PlayOrPause(url);
 }
 

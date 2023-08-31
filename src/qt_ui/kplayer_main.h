@@ -40,6 +40,8 @@ private:
     void OnForward();
     void OnBackward();
 
+    void OnPlayVideo(const QString &url);
+
     bool SigConnect();
 
     QPropertyAnimation *ctrlAnimShow_ = nullptr;
