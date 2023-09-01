@@ -69,10 +69,6 @@ void video_image_display(VideoState *is)
         }
         vp->uploaded = 1;
         vp->flip_v = vp->frame->linesize[0] < 0;
-
-        if (player->callbacks.video_dimensions_changed) {
-            player->callbacks.video_dimensions_changed(player->userdata, vp->frame->width, vp->frame->height);
-        }
     }
 
     SDL_RenderCopyEx(player->renderer, is->vid_texture, NULL, &rect, 0, NULL, vp->flip_v ? SDL_FLIP_VERTICAL : 0);
@@ -376,6 +372,10 @@ void set_default_window_size(VideoState *is, int width, int height, AVRational s
     calculate_display_rect(&rect, 0, 0, max_width, max_height, width, height, sar);
     player->default_width  = rect.w;
     player->default_height = rect.h;
+
+    if (player->callbacks.video_dimensions_changed) {
+        player->callbacks.video_dimensions_changed(player->userdata, rect.w, rect.h);
+    }
 }
 
 int video_open(VideoState *is)

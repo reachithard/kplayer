@@ -112,6 +112,16 @@ int player_seek(Player *player, double incr) {
     return 0;
 }
 
+int player_jump(Player *player, float pos) {
+    if (player) {
+        int64_t ts = pos * player->is.ic->duration;
+        if (player->is.ic->start_time != AV_NOPTS_VALUE)
+            ts += player->is.ic->start_time;
+        stream_seek(&player->is, ts, 0, 0);
+    }
+    return 0;
+}
+
 int player_set_speed(Player *player, float speed) {
     if (player) {
         player->play_rate = speed;

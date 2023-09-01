@@ -112,3 +112,7 @@ int KplayerShow::SetSpeed(float speed) {
 void KplayerShow::OnVolumeChanged(float volume) {
     wrapper_.VideoUpdateVolume(volume);
 }
+
+void KplayerShow::OnVideoJump(float pos) {
+    wrapper_.VideoJump(pos);
+}

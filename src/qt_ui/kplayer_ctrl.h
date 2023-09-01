@@ -43,6 +43,7 @@ signals:
     void SigShowOrHidePlaylist();
     void SigSpeedChanged(float speed);
     void SigVolumeChanged(float volume);
+    void SigPlayerChanged(float volume);
 private:
     void SigConnect();
     Ui::KplayerCtrl *ui;

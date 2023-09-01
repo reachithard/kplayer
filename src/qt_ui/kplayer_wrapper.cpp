@@ -157,3 +157,12 @@ int KplayerWrapper::VideoUpdateVolume(float volume) {
     player_update_volume(player_, volume);
     return 0;
 }
+
+int KplayerWrapper::VideoJump(float pos) {
+    if (!player_) {
+        return KPLAYER_WRAPPER_INIT_ERROR;
+    }
+
+    player_jump(player_, pos);
+    return 0;
+}

@@ -64,7 +64,7 @@ void KplayerCtrl::OnVideoPlaySeconds(int sec) {
     QTime time(thh, tmm, tss);
 
     ui->VideoPlayTimeTimeEdit->setTime(time);
-    ui->PlaySlider->setValue(((float)sec / (float)totalTime_) * 100);
+    ui->PlaySlider->SetValue(((float)sec / (float)totalTime_) * 100);
 }
 
 void KplayerCtrl::OnVideoTotalSeconds(int sec) {
@@ -79,13 +79,13 @@ void KplayerCtrl::OnVideoTotalSeconds(int sec) {
 }
 
 void KplayerCtrl::OnVideoVolume(double volume) {
-    ui->VolumeSlider->setValue(volume * 100);
+    ui->VolumeSlider->SetValue(volume * 100);
 }
 
 void KplayerCtrl::OnPlayerChanged(int value) {
-
+    emit SigPlayerChanged(value * 0.01);
 }
 
 void KplayerCtrl::OnVolumeChanged(int value) {
-    SigVolumeChanged(value * 0.01);
+    emit SigVolumeChanged(value * 0.01);
 }

@@ -81,6 +81,7 @@ bool KplayerMain::SigConnect() {
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigSpeedChanged, this, &KplayerMain::OnSpeedChanged);
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigShowOrHidePlaylist, this, &KplayerMain::OnShowOrHidePlaylist);
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigVolumeChanged, ui->ShowWid, &KplayerShow::OnVolumeChanged);
+    (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigPlayerChanged, ui->ShowWid, &KplayerShow::OnVideoJump);
 
     (void)connect(&playList_, &KplayerPlayList::SigPlayVideo, this, &KplayerMain::OnPlayVideo);
     return true;

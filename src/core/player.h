@@ -15,6 +15,8 @@ int player_mute(Player *player);
 
 int player_seek(Player *player, double incr);
 
+int player_jump(Player *player, float pos);
+
 int player_set_speed(Player *player, float speed);
 
 int player_update_volume(Player *player, float volume);

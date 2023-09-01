@@ -35,6 +35,8 @@ public:
 
     void Close();
 
+    void OnVideoJump(float pos);
+
     void OnVolumeChanged(float volume);
 signals:
     void SigShowFullScreen();

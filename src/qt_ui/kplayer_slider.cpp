@@ -18,12 +18,23 @@ void KplayerSlider::mousePressEvent(QMouseEvent *ev) {
 }
 
 void KplayerSlider::mouseReleaseEvent(QMouseEvent *ev) {
-    pressed = false;
-    int pos = value();
-    emit SigSliderValueChanged(pos);
+    if (pressed) {
+        int pos = value();
+        emit SigSliderValueChanged(pos);
+        pressed = false;
+    }
+
     QSlider::mouseReleaseEvent(ev);
 }
 
 void KplayerSlider::mouseMoveEvent(QMouseEvent *ev) {
+    pressed = true;
     QSlider::mouseMoveEvent(ev);
+}
+
+void KplayerSlider::SetValue(int value) {
+    if (!pressed) {
+        std::lock_guard<std::mutex> tm(lk);
+        setValue(value);
+    }
 }
