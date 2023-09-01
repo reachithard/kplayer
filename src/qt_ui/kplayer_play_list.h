@@ -26,8 +26,14 @@ public:
     bool IsEmpty() const;
 
     QString GetCurrentItem();
+
+    void AddFiles(const QStringList &urls);
 signals:
     void SigPlayVideo(const QString &url);
+
+protected:
+    void dropEvent(QDropEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
 private:
     void OnAddFile(QString strFileName);
     void OnItemDoubleClicked(QListWidgetItem *item);

@@ -47,10 +47,13 @@ signals:
     void SigVideoPauseState(int state);
     void SigVideoStopFinished();
     void SigVideoPlayStart(const char *filename);
+    void SigAddPlayFile(const QStringList &urls);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
 
     void AdjustSizeShow();
 

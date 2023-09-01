@@ -8,6 +8,8 @@
 #include "ui_kplayer_show.h"
 
 #include <QKeyEvent>
+#include <QMimeData>
+#include <QDebug>
 
 #include "kplayer_errors.h"
 
@@ -15,7 +17,6 @@ KplayerShow::KplayerShow(QWidget *parent) :
         QWidget(parent), ui(new Ui::KplayerShow) {
     ui->setupUi(this);
 
-//    ui->label->setUpdatesEnabled(false);
     setMouseTracking(true);
     setAcceptDrops(true);
     ui->label->setAttribute(Qt::WA_OpaquePaintEvent);
@@ -115,4 +116,37 @@ void KplayerShow::OnVolumeChanged(float volume) {
 
 void KplayerShow::OnVideoJump(float pos) {
     wrapper_.VideoJump(pos);
+}
+
+void KplayerShow::dropEvent(QDropEvent *event) {
+    QList<QUrl> urls = event->mimeData()->urls();
+    if(urls.isEmpty())
+    {
+        return;
+    }
+
+    QStringList temp;
+    for(QUrl url: urls)
+    {
+        // 进行后缀名判断
+        QString strFileName = url.toLocalFile();
+        bool bSupportMovie = strFileName.endsWith(".mkv", Qt::CaseInsensitive) ||
+                strFileName.endsWith(".rmvb", Qt::CaseInsensitive) ||
+                strFileName.endsWith(".mp4", Qt::CaseInsensitive) ||
+                strFileName.endsWith(".avi", Qt::CaseInsensitive) ||
+                strFileName.endsWith(".flv", Qt::CaseInsensitive) ||
+                strFileName.endsWith(".wmv", Qt::CaseInsensitive) ||
+                strFileName.endsWith(".3gp", Qt::CaseInsensitive);
+        if (bSupportMovie)
+        {
+            temp.push_back(strFileName);
+        }
+    }
+    qDebug() << "drop event";
+    emit SigAddPlayFile(temp);
+}
+
+void KplayerShow::dragEnterEvent(QDragEnterEvent *event) {
+    event->acceptProposedAction();
+    QWidget::dragEnterEvent(event);
 }

@@ -41,6 +41,7 @@ private:
     void OnBackward();
 
     void OnPlayVideo(const QString &url);
+    void OnAddPlayFile(const QStringList &urls);
 
     bool SigConnect();
 

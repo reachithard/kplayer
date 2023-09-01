@@ -73,6 +73,7 @@ bool KplayerMain::SigConnect() {
 //    (void)connect(ui->ShowWid, &KplayerShow::SigVideoPauseState, ui->CtrlBarWid, &KplayerCtrl::OnVideoPauseState);
 //    (void)connect(ui->ShowWid, &KplayerShow::SigVideoStopFinished, ui->CtrlBarWid, &KplayerCtrl::OnVideoStopFinished);
 //    (void)connect(ui->ShowWid, &KplayerShow::SigVideoPlayStart, ui->CtrlBarWid, &KplayerCtrl::OnVideoPlayStart);
+    (void)connect(ui->ShowWid, &KplayerShow::SigAddPlayFile, this, &KplayerMain::OnAddPlayFile);
 
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigPlayOrPause, this, &KplayerMain::OnPlayOrPause);
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigMute, this, &KplayerMain::OnMute);
@@ -191,5 +192,14 @@ void KplayerMain::OnPlayVideo(const QString &url) {
         return;
     }
     ui->ShowWid->PlayOrPause(url);
+}
+
+void KplayerMain::OnAddPlayFile(const QStringList &urls) {
+    if (urls.empty()) {
+        return;
+    }
+
+    playList_.AddFiles(urls);
+    ui->ShowWid->PlayOrPause(urls.front());
 }
 
