@@ -15,6 +15,7 @@ SET(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/output)
 
 if(WIN32)
     INCLUDE(cmake/utils/intf.cmake)
+    add_subdirectory(3rd/vendor/whisper.cpp-1.4.2)
     add_subdirectory(src)
     add_subdirectory(test)
 else(WIN32)

@@ -2,3 +2,6 @@
 /.vscode
 /output
 /cmake-build-debug
+/res/jfk.wav
+/res/test.mp4
+/res/ggml-small.bin

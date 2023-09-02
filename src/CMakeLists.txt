@@ -1,9 +1,20 @@
 if(WIN32)
     include_directories(${CMAKE_SOURCE_DIR}/3rd/windows/include)
+    include_directories(${CMAKE_SOURCE_DIR}/3rd/vendor/whisper.cpp-1.4.2)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qt_ui)
     link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/bin)
     link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/lib)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -D__STDC_CONSTANT_MACROS")
+
+    set(ASR_SRC
+            ${CMAKE_CURRENT_SOURCE_DIR}/asr/asr_whisper_wrapper.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/asr/asr_whisper_wrapper.h)
+    add_library(asr SHARED ${CMAKE_CURRENT_SOURCE_DIR}/asr/asr_whisper_wrapper.cpp)
+    target_sources(asr PRIVATE ${ASR_SRC})
+    target_link_libraries(asr PRIVATE whisper)
+
+    add_executable(test_asr ${CMAKE_CURRENT_SOURCE_DIR}/asr/test_asr_whisper_wrapper.cpp)
+    target_link_libraries(test_asr PRIVATE asr)
 
     set(PLAYER_SRC
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player.c
