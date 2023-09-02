@@ -67,6 +67,7 @@ int asr_init(AsrWhisperCtx *asr, const char *model, const char *language) {
     asr->max_tokens     = 0;
 
     asr->language = strdup(language);
+    asr->model = strdup(model);
 
     if (strcmp("auto", asr->language) && whisper_lang_id(asr->language) == -1) {
         return -1;
@@ -114,6 +115,7 @@ int asr_process(AsrWhisperCtx *asr, const float * samples, int n_samples) {
 //    wparams.prompt_n_tokens  = asr->no_context ? 0       : prompt_tokens.size();
 
     // 进行处理
+    printf("process begin\n");
     if (whisper_full(asr->ctx, wparams, samples, n_samples) != 0) {
         return -1;
     }
@@ -123,7 +125,7 @@ int asr_process(AsrWhisperCtx *asr, const float * samples, int n_samples) {
         const char * text = whisper_full_get_segment_text(asr->ctx, i);
         printf("get trans:%s\n", text);
     }
-
+    printf("process end\n");
     return 0;
 }
 

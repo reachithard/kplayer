@@ -118,12 +118,28 @@ int main() {
         return -1;
     }
 
+    std::cout << "length" << pcmf32.size() << std::endl;
+    int idx = 0;
+    int step = 176000 / 5;
+    int length = step;
     while (loop) {
-        if (asr_process(ctx, pcmf32.data(), pcmf32.size()) != 0) {
-            std::cout << "asr_process error" << std::endl;
+        if (idx > pcmf32.size() - 1) {
+            break;
         }
 
-        sleep(1);
+        if (idx + length > pcmf32.size()) {
+            length = pcmf32.size() - idx;
+        }
+
+        if (asr_process(ctx, pcmf32.data() + idx, length) != 0) {
+            std::cout << "asr_process error" << std::endl;
+            length += step;
+        } else {
+            std::cout << "asr_process success:" << idx << " length" << length << std::endl;
+            idx += length;
+            length = step;
+        }
+
     }
 
     return 0;
