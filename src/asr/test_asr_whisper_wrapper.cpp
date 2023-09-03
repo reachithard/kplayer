@@ -6,7 +6,7 @@
 #define DR_WAV_IMPLEMENTATION
 
 #include "asr_whisper_wrapper.h"
-#include "test_dr_wav.h"
+#include "dr_wav.h"
 
 #define COMMON_SAMPLE_RATE 16000
 

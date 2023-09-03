@@ -6,11 +6,21 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include <vector>
+#include <iostream>
+#include <algorithm>
 #include "asr_whisper_wrapper.h"
+#include "dr_wav.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
+
+struct AsrBufferCtx {
+    std::vector<float> pcmf32;
+    std::vector<float> pcmf32_old;
+    std::vector<float> pcmf32_new;
+};
 
 AsrWhisperCtx *asr_create() {
     AsrWhisperCtx* asr = (AsrWhisperCtx*)malloc(sizeof(AsrWhisperCtx));
@@ -20,7 +30,7 @@ AsrWhisperCtx *asr_create() {
 
     memset(asr, 0, sizeof(AsrWhisperCtx));
     // 设置默认值
-    asr->n_threads  = 1;
+    asr->n_threads  = 2;
     asr->step_ms    = 1000;
     asr->length_ms  = 1500;
     asr->keep_ms    = 200;
@@ -85,59 +95,130 @@ int asr_init(AsrWhisperCtx *asr, const char *model, const char *language) {
         }
     }
 
+    // 内存的处理，由上层控制
+    asr->wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
+
+    asr->wparams.print_progress   = false;
+    asr->wparams.print_special    = asr->print_special;
+    asr->wparams.print_realtime   = false;
+    asr->wparams.print_timestamps = !asr->no_timestamps;
+    asr->wparams.translate        = asr->translate;
+    asr->wparams.single_segment   = !asr->use_vad;
+    asr->wparams.max_tokens       = asr->max_tokens;
+    asr->wparams.language         = asr->language;
+    asr->wparams.n_threads        = asr->n_threads;
+
+    asr->wparams.audio_ctx        = asr->audio_ctx;
+    asr->wparams.speed_up         = asr->speed_up;
+
+    // disable temperature fallback
+    //asr->wparams.temperature_inc  = -1.0f;
+    asr->wparams.temperature_inc  = asr->no_fallback ? 0.0f : asr->wparams.temperature_inc;
+
+    asr->wparams.prompt_tokens = NULL;
+    asr->wparams.prompt_n_tokens = 0;
+
+//    asr->buffer = malloc(sizeof(AsrBufferCtx));
+//    AsrBufferCtx *buffer = (AsrBufferCtx*)asr->buffer;
+//    buffer->pcmf32.reserve(asr->n_samples_30s);
+//    std::fill(buffer->pcmf32.begin(), buffer->pcmf32.end(), 0.0f);
+//    buffer->pcmf32_old;
+//    buffer->pcmf32_new.reserve(asr->n_samples_30s);
+//    std::fill(buffer->pcmf32_new.begin(), buffer->pcmf32_new.end(), 0.0f);
+
+    asr->file = fopen("test2.log", "aw+");
     return 0;
 }
 
 int asr_process(AsrWhisperCtx *asr, const float * samples, int n_samples) {
-    // 内存的处理，由上层控制
-    whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
 
-    wparams.print_progress   = false;
-    wparams.print_special    = asr->print_special;
-    wparams.print_realtime   = false;
-    wparams.print_timestamps = !asr->no_timestamps;
-    wparams.translate        = asr->translate;
-    wparams.single_segment   = !asr->use_vad;
-    wparams.max_tokens       = asr->max_tokens;
-    wparams.language         = asr->language;
-    wparams.n_threads        = asr->n_threads;
+//    asr->wparams.prompt_tokens    = asr->no_context ? nullptr : prompt_tokens.data();
+//    asr->wparams.prompt_n_tokens  = asr->no_context ? 0       : prompt_tokens.size();
 
-    wparams.audio_ctx        = asr->audio_ctx;
-    wparams.speed_up         = asr->speed_up;
+    if (false) {
+        AsrBufferCtx *buffer = (AsrBufferCtx*)asr->buffer;
+        buffer->pcmf32_new.resize(n_samples);
+        memcpy(buffer->pcmf32_new.data(), samples, n_samples);
+        const int n_samples_new = buffer->pcmf32_new.size();
 
-    // disable temperature fallback
-    //wparams.temperature_inc  = -1.0f;
-    wparams.temperature_inc  = asr->no_fallback ? 0.0f : wparams.temperature_inc;
+        // take up to params.length_ms audio from previous iteration
+        std::cout << "test" << asr->n_samples_keep << " " << asr->n_samples_len << " " << n_samples_new << std::endl;
+        const int n_samples_take = std::min((int) buffer->pcmf32_old.size(), std::max(0, asr->n_samples_keep + asr->n_samples_len - n_samples_new));
 
-    wparams.prompt_tokens = NULL;
-    wparams.prompt_n_tokens = 0;
-//    wparams.prompt_tokens    = asr->no_context ? nullptr : prompt_tokens.data();
-//    wparams.prompt_n_tokens  = asr->no_context ? 0       : prompt_tokens.size();
+        printf("processing: take = %d, new = %d, old = %d\n", n_samples_take, n_samples_new, (int) buffer->pcmf32_old.size());
 
-    printf("sample step:%d %d\n", asr->n_samples_step, n_samples);
+        buffer->pcmf32.resize(n_samples_new + n_samples_take);
 
-    if (n_samples > 2 * asr->n_samples_step) {
-        printf("cannot process audio fast enough, dropping audio\n");
-        return -1;
+        for (int i = 0; i < n_samples_take; i++) {
+            buffer->pcmf32[i] = buffer->pcmf32_old[buffer->pcmf32_old.size() - n_samples_take + i];
+        }
+
+        memcpy(buffer->pcmf32.data() + n_samples_take, buffer->pcmf32_new.data(), n_samples_new*sizeof(float));
+
+        buffer->pcmf32_old = buffer->pcmf32;
+
+        printf("sample step:%d %d\n", asr->n_samples_step, n_samples);
+
+        // 进行处理
+        printf("process begin %d\n", (int)buffer->pcmf32.size());
+        if (whisper_full(asr->ctx, asr->wparams, buffer->pcmf32.data(), buffer->pcmf32.size()) != 0) {
+            return -1;
+        }
+
+        const int n_segments = whisper_full_n_segments(asr->ctx);
+        for (int i = 0; i < n_segments; ++i) {
+            const char * text = whisper_full_get_segment_text(asr->ctx, i);
+            printf("get trans:%s\n", text);
+        }
+        printf("process end\n");
+    } else {
+        if (whisper_full(asr->ctx, asr->wparams, samples, n_samples) != 0) {
+            return -1;
+        }
+
+        const int n_segments = whisper_full_n_segments(asr->ctx);
+        for (int i = 0; i < n_segments; ++i) {
+            const char * text = whisper_full_get_segment_text(asr->ctx, i);
+            printf("get trans:%s\n", text);
+        }
+//        AsrBufferCtx *buffer = (AsrBufferCtx*)asr->buffer;
+//        printf("process begin %d\n", (int)buffer->pcmf32.size());
+//        buffer->pcmf32_new.resize(n_samples);
+//        memcpy(buffer->pcmf32_new.data(), samples, n_samples);
+//
+//        buffer->pcmf32.insert(buffer->pcmf32.end(), buffer->pcmf32_new.begin(), buffer->pcmf32_new.end());
+//        if (buffer->pcmf32.size() == 16384) {
+//            // 进行处理
+//            for (int idx = 0; idx < buffer->pcmf32.size(); idx++) {
+//                fprintf(asr->file, "%x", *(int*)&buffer->pcmf32[idx]);
+//            }
+//
+////            if (whisper_full(asr->ctx, asr->wparams, buffer->pcmf32.data(), buffer->pcmf32.size()) != 0) {
+////                return -1;
+////            }
+////
+////            const int n_segments = whisper_full_n_segments(asr->ctx);
+////            for (int i = 0; i < n_segments; ++i) {
+////                const char * text = whisper_full_get_segment_text(asr->ctx, i);
+////                printf("get trans:%s\n", text);
+////            }
+////            printf("process end\n");
+//            buffer->pcmf32.clear();
+//        }
     }
 
-    if (n_samples < asr->n_samples_step / 2) {
-        printf("too small\n");
-        return -1;
-    }
 
-    // 进行处理
-    printf("process begin\n");
-    if (whisper_full(asr->ctx, wparams, samples, n_samples) != 0) {
-        return -1;
-    }
+//    if (n_samples > 2 * asr->n_samples_step) {
+//        printf("cannot process audio fast enough, dropping audio\n");
+//        return -1;
+//    }
 
-    const int n_segments = whisper_full_n_segments(asr->ctx);
-    for (int i = 0; i < n_segments; ++i) {
-        const char * text = whisper_full_get_segment_text(asr->ctx, i);
-        printf("get trans:%s\n", text);
-    }
-    printf("process end\n");
+//    if (n_samples < asr->n_samples_step / 2) {
+//        printf("too small\n");
+//        return -1;
+//    }
+
+
     return 0;
 }
 
@@ -153,6 +234,6 @@ void asr_destroy(AsrWhisperCtx *asr) {
     free((void*)asr);
 }
 
-#ifdef __cplusplus
-}
-#endif
+//#ifdef __cplusplus
+//}
+//#endif

@@ -88,6 +88,15 @@ int player_play(Player *player) {
         player->callbacks.video_play_start(player->userdata, player->input_filename);
     }
 
+    if (true) {
+        asr_thread(&player->is);
+//        player->is.asr_tid = SDL_CreateThread(asr_thread, "asr_thread", is);
+//        if (!is->asr_tid) {
+//            av_log(NULL, AV_LOG_FATAL, "Failed to initialize asr_thread thread!\n");
+//            return -1;
+//        }
+    }
+
     VideoState *is = stream_open(player, player->input_filename, player->file_iformat);
     if (!is) {
         av_log(NULL, AV_LOG_FATAL, "Failed to initialize VideoState!\n");

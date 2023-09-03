@@ -6,6 +6,8 @@
 #include "player_packet_queue.h"
 #include "player_clock.h"
 #include "player_asr_queue.h"
+#define DR_WAV_IMPLEMENTATION
+#include "dr_wav.h"
 
 void video_image_display(VideoState *is)
 {
@@ -1779,14 +1781,6 @@ int read_thread(void *arg)
         stream_component_open(is, st_index[AVMEDIA_TYPE_SUBTITLE]);
     }
 
-    if (true) {
-        is->asr_tid = SDL_CreateThread(asr_thread, "asr_thread", is);
-        if (!is->refresh_tid) {
-            av_log(NULL, AV_LOG_FATAL, "Failed to initialize asr_thread thread!\n");
-            return -1;
-        }
-    }
-
     if (is->video_stream < 0 && is->audio_stream < 0) {
         av_log(NULL, AV_LOG_FATAL, "Failed to open file '%s' or configure filtergraph\n",
                is->filename);
@@ -1966,6 +1960,8 @@ VideoState *stream_open(Player *player, const char *filename,
     is->iformat = iformat;
     is->ytop    = 0;
     is->xleft   = 0;
+
+//    asr_thread(is);
 
     /* start video display */
     if (frame_queue_init(&is->pictq, &is->videoq, VIDEO_PICTURE_QUEUE_SIZE, 1) < 0)
@@ -2875,30 +2871,54 @@ int refresh_thread(void *arg) {
 }
 
 int asr_thread(void *arg) {
-//    VideoState *is = arg;
-//    Player *player = container_of(is, Player, is);
-//    AsrPacket packet;
-//    for (;;) {
-//        av_log(NULL, AV_LOG_FATAL, "asr_thread thread!\n");
-//        if (asr_queue_get(&is->asr_queue, &packet, 1) < 0) {
-//            av_log(NULL, AV_LOG_FATAL, "SDL_Delay thread!\n");
-//            continue;
-//        }
-//
-//        if (is->asr_buffer_idx + packet.data_size > 16384 * 4) {
-//            memcpy(is->asr_buffer + is->asr_buffer_idx, packet.data, 16384 * 4 - is->asr_buffer_idx);
-//            is->asr_buffer_idx = 16384;
-//            av_log(NULL, AV_LOG_FATAL, "asr_thread process!\n");
-//            if (asr_process(player->asr, (float*)is->asr_buffer, 16384) != 0) {
-//
-//            } else {
-//            }
-//            is->asr_buffer_idx = 0;
-//        } else {
-//            memcpy(is->asr_buffer + is->asr_buffer_idx, packet.data, packet.data_size);
-//            is->asr_buffer_idx += packet.data_size;
-//            av_log(NULL, AV_LOG_FATAL, "asr_thread append %d!\n", is->asr_buffer_idx);
-//        }
+    VideoState *is = (VideoState*)arg;
+    Player *player = container_of(is, Player, is);
+    drwav wav;
+    if (drwav_init_file(&wav, player->input_filename, NULL) == false) {
+        fprintf(stderr, "error: failed to open '%s' as WAV file\n", player->input_filename);
+        return false;
+    }
+
+    if (wav.channels != 1 && wav.channels != 2) {
+        fprintf(stderr, "%s: WAV file '%s' must be mono or stereo\n", __func__, player->input_filename);
+        return false;
+    }
+
+//    if (stereo && wav.channels != 2) {
+//        fprintf(stderr, "%s: WAV file '%s' must be stereo for diarization\n", __func__, fname.c_str());
+//        return false;
 //    }
+
+    if (wav.sampleRate != 16000) {
+        fprintf(stderr, "%s: WAV file '%s' must be %i kHz\n", __func__, player->input_filename, 16000/1000);
+        return false;
+    }
+
+    if (wav.bitsPerSample != 16) {
+        fprintf(stderr, "%s: WAV file '%s' must be 16-bit\n", __func__, player->input_filename);
+        return false;
+    }
+
+    const uint64_t n = wav.totalPCMFrameCount;
+//    av_fast_malloc(&is->asr_16_buffer, &is->asr_16_buffer_size, n * wav.channels);
+//    av_fast_malloc(&is->asr_buffer, &is->asr_buffer_size, n);
+    int16_t *asr_16_buffer = (int16_t*)malloc(sizeof(int16_t) * n * wav.channels);
+    float *asr_buffer = (float*)malloc(sizeof(float) * n);
+    drwav_read_pcm_frames_s16(&wav, n, asr_16_buffer);
+    drwav_uninit(&wav);
+
+    if (wav.channels == 1) {
+        for (uint64_t i = 0; i < n; i++) {
+            *(asr_buffer + i) = (float)(asr_16_buffer[i])/32768.0f;
+        }
+    } else {
+        for (uint64_t i = 0; i < n; i++) {
+            *(asr_buffer + i) = (float)(asr_16_buffer[2*i] + asr_16_buffer[2*i + 1])/65536.0f;
+        }
+    }
+
+    asr_process(player->asr, asr_buffer, n);
+    free(asr_16_buffer);
+    free(asr_buffer);
     return 0;
 }

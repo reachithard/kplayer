@@ -43,9 +43,11 @@ typedef struct AsrWhisperCtx {
     int n_samples_30s;
 
     bool use_vad; // sliding window mode uses VAD
-
     int n_new_line; // number of steps to print new line
 
+    struct whisper_full_params wparams;
+    void *buffer;
+    FILE *file;
 
 //    std::string language  = "en";
 //    std::string model     = "models/ggml-base.en.bin";
