@@ -104,7 +104,8 @@ void KplayerPlayList::dropEvent(QDropEvent *event) {
                              strFileName.endsWith(".avi", Qt::CaseInsensitive) ||
                              strFileName.endsWith(".flv", Qt::CaseInsensitive) ||
                              strFileName.endsWith(".wmv", Qt::CaseInsensitive) ||
-                             strFileName.endsWith(".3gp", Qt::CaseInsensitive);
+                             strFileName.endsWith(".3gp", Qt::CaseInsensitive) ||
+                            strFileName.endsWith(".wav", Qt::CaseInsensitive);
         if (bSupportMovie)
         {
             temp.push_back(strFileName);

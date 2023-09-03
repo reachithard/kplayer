@@ -15,6 +15,6 @@ PlayerSoundtouch *create_touch();
 
 int touch_translate(PlayerSoundtouch *touch, short* data, float speed, float pitch, int len, int bytes_per_sample, int channel, int sample_rate);
 
-void destroy_touch(PlayerSoundtouch *touch);
+void toush_destroy(PlayerSoundtouch *touch);
 
 #endif //KPLAYER_PLAYER_SOUNDTOUCH_H

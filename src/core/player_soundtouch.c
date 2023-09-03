@@ -31,7 +31,7 @@ int touch_translate(PlayerSoundtouch *touch, short* data, float speed, float pit
     return pcm_data_size;
 }
 
-void destroy_touch(PlayerSoundtouch *touch) {
+void toush_destroy(PlayerSoundtouch *touch) {
     if (touch) {
         soundtouch_destroyInstance(touch->handle);
         free(touch);

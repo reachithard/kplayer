@@ -4,7 +4,7 @@
 #include "player_video_state.h"
 
 int player_global_init() {
-    av_log_set_flags(AV_LOG_SKIP_REPEATED);
+    // av_log_set_flags(AV_LOG_SKIP_REPEATED);
 
     avdevice_register_all();
     avformat_network_init();
@@ -61,6 +61,7 @@ Player *player_create() {
     player->autorotate = 1;
     player->find_stream_info = 1;
     player->filter_nbthreads = 0;
+    player->show_status = 0;
 
     // SDL_RendererInfo renderer_info = {0};
     player->refresh_loop = 1;
@@ -68,6 +69,13 @@ Player *player_create() {
     player->w_id = NULL;
     player->play_rate = 1.0f;
     player->touch = create_touch();
+
+    // asr
+    player->asr = asr_create();
+    if (asr_init(player->asr, "C:\\workspace\\kplayer\\res\\ggml-small.bin", "en") != 0) {
+        asr_destroy(player->asr);
+        player->asr = NULL;
+    }
     return player;
 }
 
@@ -161,5 +169,6 @@ int player_stop(Player *player) {
 }
 
 void player_destroy(Player *player) {
-    destroy_touch(player->touch);
+    toush_destroy(player->touch);
+    asr_destroy(player->asr);
 }

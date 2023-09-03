@@ -2,6 +2,7 @@ if(WIN32)
     include_directories(${CMAKE_SOURCE_DIR}/3rd/windows/include)
     include_directories(${CMAKE_SOURCE_DIR}/3rd/vendor/whisper.cpp-1.4.2)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qt_ui)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/asr)
     link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/bin)
     link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/lib)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -D__STDC_CONSTANT_MACROS")
@@ -18,6 +19,8 @@ if(WIN32)
 
     set(PLAYER_SRC
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player.c
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/player_asr_queue.c
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/player_asr_queue.h
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_clock.c
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_clock.h
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_decoder.c
@@ -47,7 +50,7 @@ if(WIN32)
 
     add_library(player SHARED ${CMAKE_CURRENT_SOURCE_DIR}/core/player.c)
     target_sources(player PRIVATE ${PLAYER_SRC})
-    target_link_libraries(player PRIVATE avdevice avfilter avformat  avcodec swresample swscale avutil sdl2 SoundTouchDll_x64)
+    target_link_libraries(player PRIVATE avdevice avfilter avformat  avcodec swresample swscale avutil sdl2 SoundTouchDll_x64 asr)
 
     add_executable(test_player ${CMAKE_CURRENT_SOURCE_DIR}/core/test_player.cpp)
     target_link_libraries(test_player PRIVATE player)

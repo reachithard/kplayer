@@ -118,29 +118,82 @@ int main() {
         return -1;
     }
 
-    std::cout << "length" << pcmf32.size() << std::endl;
-    int idx = 0;
-    int step = 176000 / 5;
-    int length = step;
-    while (loop) {
-        if (idx > pcmf32.size() - 1) {
-            break;
-        }
+    if (true) {
+        std::cout << "length" << pcmf32.size() << std::endl;
+        int idx = 0;
+        int step = 16384;
+        int length = step;
+        while (loop) {
+            if (idx > pcmf32.size() - 1) {
+                break;
+            }
 
-        if (idx + length > pcmf32.size()) {
-            length = pcmf32.size() - idx;
-        }
+            if (idx + length > pcmf32.size()) {
+                length = pcmf32.size() - idx;
+            }
 
-        if (asr_process(ctx, pcmf32.data() + idx, length) != 0) {
-            std::cout << "asr_process error" << std::endl;
-            length += step;
-        } else {
-            std::cout << "asr_process success:" << idx << " length" << length << std::endl;
-            idx += length;
-            length = step;
-        }
+            if (asr_process(ctx, pcmf32.data() + idx, length) != 0) {
+                std::cout << "asr_process error" << std::endl;
+                length += step;
+            } else {
+                std::cout << "asr_process success:" << idx << " length" << length << std::endl;
+                idx += length;
+                length = step;
+            }
 
+        }
+    } else {
+        std::cout << "length" << pcmf32.size() << std::endl;
+        int idx = 0;
+        int step = 16384;
+        int length = step;
+
+        const int n_samples_step = (1e-3*ctx->step_ms  )*WHISPER_SAMPLE_RATE;
+        const int n_samples_len  = (1e-3*ctx->length_ms)*WHISPER_SAMPLE_RATE;
+        const int n_samples_keep = (1e-3*ctx->keep_ms  )*WHISPER_SAMPLE_RATE;
+        const int n_samples_30s  = (1e-3*30000.0         )*WHISPER_SAMPLE_RATE;
+
+
+        std::vector<float> asr_pcmf32    (n_samples_30s, 0.0f);
+        std::vector<float> asr_pcmf32_old;
+        std::vector<float> asr_pcmf32_new(n_samples_30s, 0.0f);
+        while (loop) {
+            if (idx > pcmf32.size() - 1) {
+                break;
+            }
+
+            if (idx + length > pcmf32.size()) {
+                length = pcmf32.size() - idx;
+            }
+            asr_pcmf32_new.resize(length / 4);
+            memcpy(asr_pcmf32_new.data(), pcmf32.data() + idx, length / 4);
+            const int n_samples_new = asr_pcmf32_new.size();
+
+            // take up to params.length_ms audio from previous iteration
+            std::cout << "test" << n_samples_keep << " " << n_samples_len << " " << n_samples_new << std::endl;
+            const int n_samples_take = std::min((int) asr_pcmf32_old.size(), std::max(0, n_samples_keep + n_samples_len - n_samples_new));
+
+            printf("processing: take = %d, new = %d, old = %d\n", n_samples_take, n_samples_new, (int) asr_pcmf32_old.size());
+
+            asr_pcmf32.resize(n_samples_new + n_samples_take);
+
+            for (int i = 0; i < n_samples_take; i++) {
+                asr_pcmf32[i] = asr_pcmf32_old[asr_pcmf32_old.size() - n_samples_take + i];
+            }
+
+            std::cout << "the length:" << idx << " " << asr_pcmf32.size() << std::endl;
+            memcpy(asr_pcmf32.data() + n_samples_take, asr_pcmf32_new.data(), n_samples_new*sizeof(float));
+
+            asr_pcmf32_old = asr_pcmf32;
+
+            if (asr_process(ctx, asr_pcmf32.data(), asr_pcmf32.size()) != 0) {
+                idx += length;
+            } else {
+                idx += length;
+            }
+        }
     }
+
 
     return 0;
 }

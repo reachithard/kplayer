@@ -81,6 +81,8 @@ int read_thread(void *arg);
 
 int refresh_thread(void *arg);
 
+int asr_thread(void *arg);
+
 VideoState *stream_open(Player *player, const char *filename,
                         const AVInputFormat *iformat);
 

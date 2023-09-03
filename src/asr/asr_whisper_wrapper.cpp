@@ -21,8 +21,8 @@ AsrWhisperCtx *asr_create() {
     memset(asr, 0, sizeof(AsrWhisperCtx));
     // 设置默认值
     asr->n_threads  = 1;
-    asr->step_ms    = 3000;
-    asr->length_ms  = 10000;
+    asr->step_ms    = 1000;
+    asr->length_ms  = 1500;
     asr->keep_ms    = 200;
     asr->capture_id = -1;
     asr->max_tokens = 32;
@@ -113,6 +113,18 @@ int asr_process(AsrWhisperCtx *asr, const float * samples, int n_samples) {
     wparams.prompt_n_tokens = 0;
 //    wparams.prompt_tokens    = asr->no_context ? nullptr : prompt_tokens.data();
 //    wparams.prompt_n_tokens  = asr->no_context ? 0       : prompt_tokens.size();
+
+    printf("sample step:%d %d\n", asr->n_samples_step, n_samples);
+
+    if (n_samples > 2 * asr->n_samples_step) {
+        printf("cannot process audio fast enough, dropping audio\n");
+        return -1;
+    }
+
+    if (n_samples < asr->n_samples_step / 2) {
+        printf("too small\n");
+        return -1;
+    }
 
     // 进行处理
     printf("process begin\n");

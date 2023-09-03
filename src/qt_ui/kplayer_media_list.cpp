@@ -42,7 +42,7 @@ void KplayerMediaList::AddFile() {
 //    QStringList listFileName = QFileDialog::getOpenFileNames(this, "打开文件", QDir::homePath(),
 //                                                             "视频文件(*.mkv *.rmvb *.mp4 *.avi *.flv *.wmv *.3gp)");
     QStringList listFileName = QFileDialog::getOpenFileNames(this, "打开文件", "C:\\workspace\\kplayer\\res",
-                                                             "视频文件(*.mkv *.rmvb *.mp4 *.avi *.flv *.wmv *.3gp)");
+                                                             "视频文件(*.mkv *.rmvb *.mp4 *.avi *.flv *.wmv *.3gp *.wav)");
 
     for (QString strFileName : listFileName)
     {

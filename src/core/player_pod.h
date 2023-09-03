@@ -41,6 +41,7 @@
 #include "SDL2/SDL_thread.h"
 #include "libavcodec/avcodec.h"
 #include "player_soundtouch.h"
+#include "asr_whisper_wrapper.h"
 
 //#include "cmdutils.h"
 //#include "opt_common.h"
@@ -109,6 +110,17 @@ typedef struct PacketQueue {
     SDL_mutex *mutex;
     SDL_cond *cond;
 } PacketQueue;
+
+typedef struct AsrPacket {
+    uint8_t *data;
+    int data_size;
+} AsrPacket;
+
+typedef struct AsrQueue {
+    AVFifo *pkt_list;
+    SDL_mutex *mutex;
+    SDL_cond *cond;
+} AsrQueue;
 
 #define VIDEO_PICTURE_QUEUE_SIZE 3
 #define SUBPICTURE_QUEUE_SIZE 16
@@ -189,6 +201,7 @@ enum ShowMode {
 
 typedef struct VideoState {
     SDL_Thread *refresh_tid;
+    SDL_Thread *asr_tid;
     SDL_Thread *read_tid;
     const AVInputFormat *iformat;
     int abort_request;
@@ -231,10 +244,12 @@ typedef struct VideoState {
     int audio_hw_buf_size;
     uint8_t *audio_buf;
     uint8_t *audio_buf1;
+    uint8_t *asr_buf;
     short *audio_touch_buf;
     unsigned int audio_buf_size; /* in bytes */
     unsigned int audio_buf1_size;
     unsigned int audio_touch_buf_size;
+    unsigned int asr_buf_size;
     int audio_buf_index; /* in bytes */
     int audio_write_buf_size;
     int audio_volume;
@@ -245,6 +260,11 @@ typedef struct VideoState {
 #endif
     struct AudioParams audio_tgt;
     struct SwrContext *swr_ctx;
+    struct SwrContext *asr_swr_ctx;
+    AsrQueue  asr_queue;
+    uint8_t *asr_buffer;
+    unsigned int asr_buffer_size;
+    unsigned int asr_buffer_idx;
     int frame_drops_early;
     int frame_drops_late;
 
@@ -384,6 +404,8 @@ typedef struct Player {
     PlayerCallback callbacks;
     float play_rate;
     PlayerSoundtouch *touch;
+
+    AsrWhisperCtx *asr;
 } Player;
 
 #define FF_QUIT_EVENT    (SDL_USEREVENT + 2)

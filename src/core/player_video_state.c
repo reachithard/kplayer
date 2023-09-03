@@ -5,6 +5,7 @@
 #include "player_decoder.h"
 #include "player_packet_queue.h"
 #include "player_clock.h"
+#include "player_asr_queue.h"
 
 void video_image_display(VideoState *is)
 {
@@ -1213,6 +1214,66 @@ reload:
         resampled_data_size = data_size;
     }
 
+//    // llw 这里将resample的数据塞进队列 供asr使用
+//    if (!is->asr_swr_ctx) {
+//        swr_free(&is->asr_swr_ctx);
+//        swr_alloc_set_opts2(&is->asr_swr_ctx,
+//                            &is->audio_tgt.ch_layout, AV_SAMPLE_FMT_FLT, 16000,
+//                            &af->frame->ch_layout, af->frame->format, af->frame->sample_rate,
+//                            0, NULL);
+//        if (!is->asr_swr_ctx || swr_init(is->asr_swr_ctx) < 0) {
+//            av_log(NULL, AV_LOG_ERROR,
+//                   "Cannot create sample rate converter for conversion of %d Hz %s %d channels to %d Hz %s %d channels!\n",
+//                   af->frame->sample_rate, av_get_sample_fmt_name(af->frame->format), af->frame->ch_layout.nb_channels,
+//                   16000, av_get_sample_fmt_name(AV_SAMPLE_FMT_FLT), is->audio_tgt.ch_layout.nb_channels);
+//            swr_free(&is->asr_swr_ctx);
+//            return -1;
+//        }
+//    }
+//
+//    if (is->asr_swr_ctx) {
+//        const uint8_t **in = (const uint8_t **)af->frame->extended_data;
+//        uint8_t **out = &is->asr_buf;
+//        int out_count = (int64_t)wanted_nb_samples * 16000 / af->frame->sample_rate + 256;
+//        int out_size  = av_samples_get_buffer_size(NULL, is->audio_tgt.ch_layout.nb_channels, out_count, AV_SAMPLE_FMT_FLT, 0);
+//        int len2;
+//        if (out_size < 0) {
+//            av_log(NULL, AV_LOG_ERROR, "av_samples_get_buffer_size() failed\n");
+//            return -1;
+//        }
+//        if (wanted_nb_samples != af->frame->nb_samples) {
+//            if (swr_set_compensation(is->asr_swr_ctx, (wanted_nb_samples - af->frame->nb_samples) * 16000 / af->frame->sample_rate,
+//                                     wanted_nb_samples * 16000 / af->frame->sample_rate) < 0) {
+//                av_log(NULL, AV_LOG_ERROR, "swr_set_compensation() failed\n");
+//                return -1;
+//            }
+//        }
+//        av_fast_malloc(&is->asr_buf, &is->asr_buf_size, out_size);
+//        if (!is->asr_buf)
+//            return AVERROR(ENOMEM);
+//        len2 = swr_convert(is->asr_swr_ctx, out, out_count, in, af->frame->nb_samples);
+//        if (len2 < 0) {
+//            av_log(NULL, AV_LOG_ERROR, "swr_convert() failed\n");
+//            return -1;
+//        }
+//        if (len2 == out_count) {
+//            av_log(NULL, AV_LOG_WARNING, "audio buffer is probably too small\n");
+//            if (swr_init(is->asr_swr_ctx) < 0)
+//                swr_free(&is->asr_swr_ctx);
+//        }
+//
+//        if (player->asr) {
+//            AsrPacket asrPacket;
+//            asrPacket.data = out;
+//            asrPacket.data_size = len2 * 4;
+////            av_log(NULL, AV_LOG_WARNING, "asr queue resample put:%d %d\n", (int)asrPacket.data_size, len2);
+//            if (asr_queue_put(&is->asr_queue, &asrPacket) < 0) {
+//                av_log(NULL, AV_LOG_WARNING, "asr_queue_put packet failed\n");
+//            }
+////            av_log(NULL, AV_LOG_WARNING, "decode asr packet size:%d %d\n", len2, out_count);
+//        }
+//    }
+
     audio_clock0 = is->audio_clock;
     /* update the audio clock with the pts */
     if (!isnan(af->pts))
@@ -1718,6 +1779,14 @@ int read_thread(void *arg)
         stream_component_open(is, st_index[AVMEDIA_TYPE_SUBTITLE]);
     }
 
+    if (true) {
+        is->asr_tid = SDL_CreateThread(asr_thread, "asr_thread", is);
+        if (!is->refresh_tid) {
+            av_log(NULL, AV_LOG_FATAL, "Failed to initialize asr_thread thread!\n");
+            return -1;
+        }
+    }
+
     if (is->video_stream < 0 && is->audio_stream < 0) {
         av_log(NULL, AV_LOG_FATAL, "Failed to open file '%s' or configure filtergraph\n",
                is->filename);
@@ -1910,6 +1979,12 @@ VideoState *stream_open(Player *player, const char *filename,
         packet_queue_init(&is->audioq) < 0 ||
         packet_queue_init(&is->subtitleq) < 0)
         goto fail;
+
+//    if (asr_queue_init(&is->asr_queue) < 0) {
+//        goto fail;
+//    }
+//
+//    av_fast_malloc(&is->asr_buffer, &is->asr_buffer_size, 16384 * 4);
 
     if (!(is->continue_read_thread = SDL_CreateCond())) {
         av_log(NULL, AV_LOG_FATAL, "SDL_CreateCond(): %s\n", SDL_GetError());
@@ -2797,4 +2872,33 @@ int refresh_thread(void *arg) {
                 break;
         }
     }
+}
+
+int asr_thread(void *arg) {
+//    VideoState *is = arg;
+//    Player *player = container_of(is, Player, is);
+//    AsrPacket packet;
+//    for (;;) {
+//        av_log(NULL, AV_LOG_FATAL, "asr_thread thread!\n");
+//        if (asr_queue_get(&is->asr_queue, &packet, 1) < 0) {
+//            av_log(NULL, AV_LOG_FATAL, "SDL_Delay thread!\n");
+//            continue;
+//        }
+//
+//        if (is->asr_buffer_idx + packet.data_size > 16384 * 4) {
+//            memcpy(is->asr_buffer + is->asr_buffer_idx, packet.data, 16384 * 4 - is->asr_buffer_idx);
+//            is->asr_buffer_idx = 16384;
+//            av_log(NULL, AV_LOG_FATAL, "asr_thread process!\n");
+//            if (asr_process(player->asr, (float*)is->asr_buffer, 16384) != 0) {
+//
+//            } else {
+//            }
+//            is->asr_buffer_idx = 0;
+//        } else {
+//            memcpy(is->asr_buffer + is->asr_buffer_idx, packet.data, packet.data_size);
+//            is->asr_buffer_idx += packet.data_size;
+//            av_log(NULL, AV_LOG_FATAL, "asr_thread append %d!\n", is->asr_buffer_idx);
+//        }
+//    }
+    return 0;
 }
