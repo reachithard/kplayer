@@ -62,6 +62,10 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset resource="../../res/player_res.qrc">
+       <normaloff>:/pic/player_max.svg</normaloff>:/pic/player_max.svg</iconset>
+     </property>
     </widget>
    </item>
    <item row="0" column="5">
@@ -80,6 +84,10 @@
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../res/player_res.qrc">
+       <normaloff>:/pic/player_close.svg</normaloff>:/pic/player_close.svg</iconset>
      </property>
     </widget>
    </item>
@@ -100,6 +108,11 @@
      <property name="text">
       <string/>
      </property>
+     <property name="icon">
+      <iconset>
+       <normalon>:/pic/player_full.svg</normalon>
+      </iconset>
+     </property>
     </widget>
    </item>
    <item row="0" column="2">
@@ -118,6 +131,10 @@
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../res/player_res.qrc">
+       <normaloff>:/pic/player_min.svg</normaloff>:/pic/player_min.svg</iconset>
      </property>
     </widget>
    </item>
@@ -148,6 +165,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res/player_res.qrc"/>
+ </resources>
  <connections/>
 </ui>
