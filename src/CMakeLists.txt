@@ -97,11 +97,13 @@ if(WIN32)
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_wrapper.h
             )
 
+    set(RCC_FILES ${CMAKE_SOURCE_DIR}/res/player_res.qrc)
     add_executable(kplayer
-            ${PROJECT_SOURCES}
+            ${PROJECT_SOURCES} ${RCC_FILES}
             )
 
-    target_link_libraries(kplayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets player intf)
+
+    target_link_libraries(kplayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets player intf )
 else(WIN32)
     find_package(FFmpeg REQUIRED)
     find_package(sdl2 REQUIRED)

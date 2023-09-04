@@ -1,0 +1,21 @@
+<RCC>
+  <qresource>
+    <file>pic/player_backforward.svg</file>
+    <file>pic/player_forward.svg</file>
+    <file>pic/player_full.svg</file>
+    <file>pic/player_hidden.svg</file>
+    <file>pic/player_max.svg</file>
+    <file>pic/player_pause.svg</file>
+    <file>pic/player_start.svg</file>
+    <file>pic/player_view.svg</file>
+    <file>pic/player_volumn.svg</file>
+    <file>pic/player_volumn_close.svg</file>
+    <file>pic/player_backforward.svg</file>
+    <file>pic/player_forward.svg</file>
+    <file>pic/player_full.svg</file>
+    <file>pic/player_max.svg</file>
+    <file>pic/player_pause.svg</file>
+    <file>pic/player_start.svg</file>
+    <file>pic/player_volumn.svg</file>
+  </qresource>
+</RCC>

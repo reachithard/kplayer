@@ -159,6 +159,10 @@
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../../res/player_res.qrc">
+         <normaloff>:/pic/player_forward.svg</normaloff>:/pic/player_forward.svg</iconset>
+       </property>
       </widget>
      </item>
      <item row="0" column="9">
@@ -178,6 +182,10 @@
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../../res/player_res.qrc">
+         <normaloff>:/pic/player_view.svg</normaloff>:/pic/player_view.svg</iconset>
+       </property>
       </widget>
      </item>
      <item row="0" column="2">
@@ -196,6 +204,10 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../res/player_res.qrc">
+         <normaloff>:/pic/player_backforward.svg</normaloff>:/pic/player_backforward.svg</iconset>
        </property>
       </widget>
      </item>
@@ -267,6 +279,10 @@
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../../res/player_res.qrc">
+         <normaloff>:/pic/player_start.svg</normaloff>:/pic/player_start.svg</iconset>
+       </property>
       </widget>
      </item>
      <item row="0" column="6">
@@ -317,6 +333,10 @@
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset resource="../../res/player_res.qrc">
+         <normaloff>:/pic/player_volumn.svg</normaloff>:/pic/player_volumn.svg</iconset>
+       </property>
       </widget>
      </item>
      <item row="0" column="8">
@@ -346,6 +366,8 @@
    <header>kplayer_slider.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../res/player_res.qrc"/>
+ </resources>
  <connections/>
 </ui>
