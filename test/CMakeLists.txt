@@ -1,6 +1,14 @@
 if(WIN32)
+    include_directories(${CMAKE_SOURCE_DIR}/3rd/windows/include)
+    include_directories(${CMAKE_SOURCE_DIR}/3rd/vendor/whisper.cpp-1.4.2)
+    link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/bin)
+    link_directories(${CMAKE_SOURCE_DIR}/3rd/windows/lib)
+
     add_executable(env env.cpp)
-    add_executable(test_ffmpeg_audio test_ffmpeg_audio.cpp)
+
+    add_executable(test_ffmpeg_audio test_ffmpeg_audio.cpp ${CMAKE_SOURCE_DIR}/src/asr/asr_whisper_wrapper.cpp
+            ${CMAKE_SOURCE_DIR}/src/asr/asr_whisper_wrapper.h)
+    target_link_libraries(test_ffmpeg_audio PRIVATE whisper avdevice avfilter avformat  avcodec swresample swscale avutil sdl2)
 else(WIN32)
     find_package(FFmpeg REQUIRED)
     find_package(sdl2 REQUIRED)

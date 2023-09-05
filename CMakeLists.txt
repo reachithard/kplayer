@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 project(kplayer)
 set(CMAKE_CXX_STANDARD 14)
 set(C_STANDARD 99)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-Bsymbolic") #  relocation R_X86_64_PC32 against symbol `ff_M24A' can not be used when making a shared object; recompile with -fPIC
 SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
