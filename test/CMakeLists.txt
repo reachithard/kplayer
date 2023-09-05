@@ -1,5 +1,6 @@
 if(WIN32)
     add_executable(env env.cpp)
+    add_executable(test_ffmpeg_audio test_ffmpeg_audio.cpp)
 else(WIN32)
     find_package(FFmpeg REQUIRED)
     find_package(sdl2 REQUIRED)
