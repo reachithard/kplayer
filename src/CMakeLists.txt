@@ -19,6 +19,8 @@ if(WIN32)
 
     set(PLAYER_SRC
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player.c
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/player_asr.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/player_asr.h
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_asr_queue.c
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_asr_queue.h
             ${CMAKE_CURRENT_SOURCE_DIR}/core/player_clock.c
