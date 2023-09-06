@@ -320,9 +320,57 @@ int main() {
         std::cout << "asr_init" << std::endl;
         return -1;
     }
+    int keep_ms = 200;
+    int32_t step_ms    = 3000;
+    int32_t length_ms  = 10000;
+    keep_ms = std::min(keep_ms,   step_ms);
+    length_ms = std::max(length_ms, step_ms);
 
-    if (asr_process(ctx, temp_f32.data(), temp_f32.size()) != 0) {
-        std::cout << "asr_process error" << std::endl;
+    const int n_samples_step = (1e-3*step_ms  )*WHISPER_SAMPLE_RATE;
+    const int n_samples_len  = (1e-3*length_ms)*WHISPER_SAMPLE_RATE;
+    const int n_samples_keep = (1e-3*keep_ms  )*WHISPER_SAMPLE_RATE;
+    const int n_samples_30s  = (1e-3*30000.0         )*WHISPER_SAMPLE_RATE;
+
+    std::vector<float> pcmf32    (n_samples_30s, 0.0f);
+    std::vector<float> pcmf32_old;
+    std::vector<float> pcmf32_new(n_samples_30s, 0.0f);
+
+    int idx = 0;
+    int length = 1600;
+
+    while (true) {
+        if (idx >= temp_f32.size()) {
+            break;
+        }
+        pcmf32_new.clear();
+        if (idx + length < temp_f32.size()) {
+            pcmf32_new.insert(pcmf32_new.end(), temp_f32.begin() + idx, temp_f32.begin() + idx + length);
+            idx += length;
+        } else {
+            pcmf32_new.insert(pcmf32_new.end(), temp_f32.begin() + idx, temp_f32.end());
+            idx = temp_f32.size();
+        }
+
+        const int n_samples_new = pcmf32_new.size();
+
+        // take up to params.length_ms audio from previous iteration
+        const int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_keep + n_samples_len - n_samples_new));
+
+        //printf("processing: take = %d, new = %d, old = %d\n", n_samples_take, n_samples_new, (int) pcmf32_old.size());
+
+        pcmf32.resize(n_samples_new + n_samples_take);
+
+        for (int i = 0; i < n_samples_take; i++) {
+            pcmf32[i] = pcmf32_old[pcmf32_old.size() - n_samples_take + i];
+        }
+
+        memcpy(pcmf32.data() + n_samples_take, pcmf32_new.data(), n_samples_new*sizeof(float));
+
+        pcmf32_old = pcmf32;
+
+        if (asr_process(ctx, pcmf32.data(), pcmf32.size()) != 0) {
+            std::cout << "asr_process error" << std::endl;
+        }
     }
 
     return 0;
