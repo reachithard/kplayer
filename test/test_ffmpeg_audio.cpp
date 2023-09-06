@@ -316,7 +316,7 @@ int main() {
         return -1;
     }
 
-    if (asr_init(ctx, "C:\\workspace\\kplayer\\res\\ggml-small.bin", "en")) {
+    if (asr_init(ctx, "C:\\workspace\\kplayer\\res\\ggml-base.bin", "en")) {
         std::cout << "asr_init" << std::endl;
         return -1;
     }
@@ -336,7 +336,7 @@ int main() {
     std::vector<float> pcmf32_new(n_samples_30s, 0.0f);
 
     int idx = 0;
-    int length = 1600;
+    int length = 16384;
 
     while (true) {
         if (idx >= temp_f32.size()) {
@@ -347,8 +347,9 @@ int main() {
             pcmf32_new.insert(pcmf32_new.end(), temp_f32.begin() + idx, temp_f32.begin() + idx + length);
             idx += length;
         } else {
+            length = temp_f32.size() - idx;
             pcmf32_new.insert(pcmf32_new.end(), temp_f32.begin() + idx, temp_f32.end());
-            idx = temp_f32.size();
+            idx += length;
         }
 
         const int n_samples_new = pcmf32_new.size();
@@ -356,7 +357,7 @@ int main() {
         // take up to params.length_ms audio from previous iteration
         const int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_keep + n_samples_len - n_samples_new));
 
-        //printf("processing: take = %d, new = %d, old = %d\n", n_samples_take, n_samples_new, (int) pcmf32_old.size());
+        printf("processing: take = %d, new = %d, old = %d idx = %d\n", n_samples_take, n_samples_new, (int) pcmf32_old.size(), idx);
 
         pcmf32.resize(n_samples_new + n_samples_take);
 
