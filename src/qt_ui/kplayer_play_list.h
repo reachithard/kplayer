@@ -30,6 +30,7 @@ public:
     void AddFiles(const QStringList &urls);
 signals:
     void SigPlayVideo(const QString &url);
+    void SigASR(const QString &url);
 
 protected:
     void dropEvent(QDropEvent *event) override;

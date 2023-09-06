@@ -30,6 +30,7 @@ bool KplayerPlayList::Init() {
 
     connect(ui->List, &KplayerMediaList::SigAddFile, this, &KplayerPlayList::OnAddFile);
     connect(ui->List, &KplayerMediaList::itemDoubleClicked, this, &KplayerPlayList::OnItemDoubleClicked);
+    connect(ui->List, &KplayerMediaList::SigASR, this, &KplayerPlayList::SigASR);
     return true;
 }
 

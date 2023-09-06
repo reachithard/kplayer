@@ -23,7 +23,8 @@ bool KplayerMediaList::Init() {
     menu_.addAction(&actRemove_);
     actClear_.setText("clear");
     menu_.addAction(&actClear_);
-
+    actClear_.setText("asr");
+    menu_.addAction(&actAsr_);
 
     connect(&actAdd_, &QAction::triggered, this, &KplayerMediaList::AddFile);
     connect(&actRemove_, &QAction::triggered, this, &KplayerMediaList::RemoveFile);
@@ -52,4 +53,9 @@ void KplayerMediaList::AddFile() {
 
 void KplayerMediaList::RemoveFile() {
     takeItem(currentRow());
+}
+
+void KplayerMediaList::ASR() {
+    QString file = currentItem()->data(Qt::UserRole).toString();
+    emit SigASR(file);
 }

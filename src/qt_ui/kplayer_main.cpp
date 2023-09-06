@@ -85,6 +85,7 @@ bool KplayerMain::SigConnect() {
     (void)connect(ui->CtrlBarWid, &KplayerCtrl::SigPlayerChanged, ui->ShowWid, &KplayerShow::OnVideoJump);
 
     (void)connect(&playList_, &KplayerPlayList::SigPlayVideo, this, &KplayerMain::OnPlayVideo);
+    (void)connect(&playList_, &KplayerPlayList::SigASR, this, &KplayerMain::OnASR);
     return true;
 }
 
@@ -201,5 +202,9 @@ void KplayerMain::OnAddPlayFile(const QStringList &urls) {
 
     playList_.AddFiles(urls);
     ui->ShowWid->PlayOrPause(urls.front());
+}
+
+void KplayerMain::OnASR(const QString &url) {
+
 }
 

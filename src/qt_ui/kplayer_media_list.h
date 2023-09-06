@@ -21,16 +21,18 @@ protected:
 private:
     void AddFile();
     void RemoveFile();
+    void ASR();
 signals:
     void SigAddFile(QString strFileName);
+    void SigASR(const QString &fileName);
 
 private:
     QMenu menu_;
 
     QAction actAdd_;     //添加文件
     QAction actRemove_;  //移除文件
-    QAction actClear_;//清空列表
-
+    QAction actClear_; //清空列表
+    QAction actAsr_; //asr功能
 };
 
 

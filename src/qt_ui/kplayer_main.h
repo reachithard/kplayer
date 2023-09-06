@@ -42,6 +42,7 @@ private:
 
     void OnPlayVideo(const QString &url);
     void OnAddPlayFile(const QStringList &urls);
+    void OnASR(const QString &url);
 
     bool SigConnect();
 
