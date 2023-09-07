@@ -320,9 +320,9 @@ int main() {
         std::cout << "asr_init" << std::endl;
         return -1;
     }
-    int keep_ms = 200;
-    int32_t step_ms    = 3000;
-    int32_t length_ms  = 10000;
+    int keep_ms = 2000;
+    int32_t step_ms    = 1000;
+    int32_t length_ms  = 1000;
     keep_ms = std::min(keep_ms,   step_ms);
     length_ms = std::max(length_ms, step_ms);
 
@@ -331,12 +331,15 @@ int main() {
     const int n_samples_keep = (1e-3*keep_ms  )*WHISPER_SAMPLE_RATE;
     const int n_samples_30s  = (1e-3*30000.0         )*WHISPER_SAMPLE_RATE;
 
+
+    printf("processing: n_samples_step = %d, n_samples_len = %d, n_samples_keep = %d n_samples_30s = %d\n", n_samples_step, n_samples_len, n_samples_keep, n_samples_30s);
+
     std::vector<float> pcmf32    (n_samples_30s, 0.0f);
     std::vector<float> pcmf32_old;
     std::vector<float> pcmf32_new(n_samples_30s, 0.0f);
 
     int idx = 0;
-    int length = 16384;
+    int length = 2048;
 
     while (true) {
         if (idx >= temp_f32.size()) {

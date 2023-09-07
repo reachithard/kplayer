@@ -19,12 +19,14 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class KplayerLoading; }
 QT_END_NAMESPACE
 
-class KplayerLoading : public QDialog {
+class KplayerLoading : public QWidget {
     Q_OBJECT
 public:
     explicit KplayerLoading(QWidget *parent = nullptr);
 
     ~KplayerLoading() override;
+
+    void Show();
 
     void setTipsText(QString strTipsText);
 

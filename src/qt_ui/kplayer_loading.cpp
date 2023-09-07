@@ -6,10 +6,11 @@
 
 #include "kplayer_loading.h"
 
+#include <QTimer>
 
 KplayerLoading::KplayerLoading(QWidget *parent) :
-        QDialog(parent) {
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+        QWidget(parent) {
+    // setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
     initUi();
 }
@@ -40,7 +41,7 @@ void KplayerLoading::initUi() {
     m_pTipsLabel->setGeometry(5, 130, 220, 50);
     m_pTipsLabel->setAlignment(Qt::AlignCenter | Qt::AlignHCenter);
     m_pTipsLabel->setObjectName("tips");
-    m_pTipsLabel->setText("加载中,请稍候...");
+    m_pTipsLabel->setText("语音转文字中...");
     m_pTipsLabel->setStyleSheet("QLabel#tips{font-family:\"Microsoft YaHei\";font-size: 15px;color: #333333;}");
     //取消按钮
     m_pCancelBtn = new QPushButton(m_pCenterFrame);
@@ -85,7 +86,6 @@ void KplayerLoading::moveToCenter(QWidget *pParent)
 void KplayerLoading::cancelBtnClicked()
 {
     emit cancelWaiting();
-    this->done(USER_CANCEL);
 }
 
 void KplayerLoading::paintEvent(QPaintEvent *event)
@@ -102,4 +102,10 @@ void KplayerLoading::paintEvent(QPaintEvent *event)
     rect.setHeight(rect.height() - 9);
     painter.drawRoundedRect(rect, 8, 8);
     QWidget::paintEvent(event);
+}
+
+void KplayerLoading::Show() {
+    QTimer::singleShot(1000, [this]() {
+        this->show();
+    });
 }

@@ -3,6 +3,7 @@
 #include <QApplication>
 
 #include "kplayer_global_init.h"
+#include "kplayer_loading.h"
 
 int main(int argc, char *argv[])
 {

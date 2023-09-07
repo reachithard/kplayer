@@ -208,10 +208,12 @@ void KplayerMain::OnAddPlayFile(const QStringList &urls) {
 }
 
 void KplayerMain::OnASR(const QString &url) {
-    KplayerLoading loading(this);
+    KplayerLoading loading;
+    loading.show();
+
     while (true) {
         qDebug() << "on asr";
-        sleep(1);
+        sleep(100);
     }
 }
 
