@@ -81,6 +81,8 @@ if(WIN32)
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_ctrl.ui
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_global_init.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_global_init.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_loading.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_loading.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_setting.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_setting.h
             ${CMAKE_CURRENT_SOURCE_DIR}/qt_ui/kplayer_setting.ui

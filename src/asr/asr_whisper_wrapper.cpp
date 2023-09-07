@@ -126,7 +126,7 @@ int asr_init(AsrWhisperCtx *asr, const char *model, const char *language) {
 //    buffer->pcmf32_new.reserve(asr->n_samples_30s);
 //    std::fill(buffer->pcmf32_new.begin(), buffer->pcmf32_new.end(), 0.0f);
 
-    asr->file = fopen("test2.log", "aw+");
+//    asr->file = fopen("test2.log", "aw+");
     return 0;
 }
 

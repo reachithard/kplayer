@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>pic/loading.gif</file>
     <file>pic/player_backforward.svg</file>
     <file>pic/player_close.svg</file>
     <file>pic/player_forward.svg</file>

@@ -47,7 +47,7 @@ typedef struct AsrWhisperCtx {
 
     struct whisper_full_params wparams;
     void *buffer;
-    FILE *file;
+    // FILE *file;
 
 //    std::string language  = "en";
 //    std::string model     = "models/ggml-base.en.bin";

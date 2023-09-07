@@ -7,6 +7,9 @@
 #include <QVariant>
 #include <QDialog>
 #include <QDebug>
+#include <unistd.h>
+
+#include "kplayer_loading.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -205,6 +208,10 @@ void KplayerMain::OnAddPlayFile(const QStringList &urls) {
 }
 
 void KplayerMain::OnASR(const QString &url) {
-
+    KplayerLoading loading(this);
+    while (true) {
+        qDebug() << "on asr";
+        sleep(1);
+    }
 }
 
